@@ -1,3 +1,4 @@
+# coding: euc-jp
 =begin
  class Polynomial
     Class of 1 variable polynomial.
@@ -10,16 +11,16 @@
     K.Kodama 2001-11-23
 
  refinement checkDivZe,checkZp and setPoly
-   by toyofuku@jiuce.or.jp 2000-03-10 
+   by toyofuku@jiuce.or.jp 2000-03-10
 
  [] []= by Masaki Suketa 2000-01-22
 
  Thaks to Hideto ISHIBASHI and Masaki Suketa for their suggestion.
- 
- K.Kodama(kodama@kobe-kosen.ac.jp) 2000-01-09 
+
+ K.Kodama(kodama@kobe-kosen.ac.jp) 2000-01-09
    first version
 
-This module is distributed freely in the term of 
+This module is distributed freely in the term of
 GNU General Public License(GPL).
 ###########################################
 
@@ -45,12 +46,12 @@ GNU General Public License(GPL).
    /
    %
    **(n)
-       power. n>=0 
+       power. n>=0
    powerModI (power, m, n=0)
        return self**power mod m
        power>=0, m:polynomial
        coefficient to mod n, if n:positive integer.
-   divmod(divisor) 
+   divmod(divisor)
        divide
        return quotient,remainder
        Assume that coefficient is field.
@@ -113,7 +114,7 @@ GNU General Public License(GPL).
  Polynomial.constructionHensel(f,g,h,n,prime,pn)
      Hensel's construction.
      Input: f,g,h,n,prime,pn  s.t. f==g*h (mod pn), pn=prime^n
-     Output: g,h  s.t. f==g*h (mod prime^(n+1)) 
+     Output: g,h  s.t. f==g*h (mod prime^(n+1))
  CONVERTING:
    Polynomial.term(c=0,n=0,one=1)
        generate term c*x^n
@@ -162,7 +163,7 @@ GNU General Public License(GPL).
         Return string representation for result of "factorize"
 =end
 
-require "number.rb"
+require "poly_ruby/number"
 
 
 module PolyWork # Work routines for polynomial
@@ -193,7 +194,7 @@ def Polynomial(poly_arg1=[0], one=1)
 	when Polynomial; return poly_arg1.clone
     when Array; return Polynomial.new(poly_arg1,one).normalize!
     when Numeric; return Polynomial.new(poly_arg1,one)
-	when String; 
+	when String;
 		poly_str=PolyWork.cnv_prog_format(poly_arg1)
 		# convert variavles to "x"
 		poly_str=poly_str.gsub(/[a-z][a-zA-Z0-9_]*/,"x")
@@ -333,7 +334,7 @@ def + (other)
 			a=other.clone; 0.upto(d1){|i| a.array[i] += @array[i]}
 			return a
 		end
-	elsif other.kind_of?(@one.class) or other.kind_of?(Numeric) 
+	elsif other.kind_of?(@one.class) or other.kind_of?(Numeric)
 		a=self.clone; a.array[0]+=other; return a.normalize!
 	elsif other.kind_of?(RationalPoly)
 		return RationalPoly(self)+other
@@ -373,7 +374,7 @@ def timesCnv (other)
 	# convolution
 	a=Polynomial.new(@zero,@one);
 	a.array.fill(@zero,0..self.degree+other.degree)
-	@array.each_with_index{|x,i| 
+	@array.each_with_index{|x,i|
 		if x!=@zero;
 			other.array.each_with_index{|y,j| a.array[i+j] += x*y};
 		end;
@@ -418,7 +419,7 @@ def * (other)
 		else if (d1>=d00); p=other.timesSep(self,d2,d1); else p=self.timesCnv(other); end
 		end;
 		return p;
-	elsif other.kind_of?(@one.class) or other.kind_of?(Numeric) 
+	elsif other.kind_of?(@one.class) or other.kind_of?(Numeric)
 		d=self.degree; a=Polynomial.new(@one,@one); a.array=Array.new(d+1)
 		0.upto(d){|i| a.array[i]=@array[i]*other}
 		return a.normalize!
@@ -451,7 +452,7 @@ end
 
 def powerModI (power, m, n=0)
 	# self^power mod m(poly.)
-	# coefficient modulo n, if n>0. 
+	# coefficient modulo n, if n>0.
 	if power.kind_of?(Integer) and power>=0
 		if n==0;
 			# calculate ** following to binary notation of "power".
@@ -543,7 +544,7 @@ q,r=self.divmod(other)
 return r
 end
 
-alias % mod 
+alias % mod
 
 def modI(divisor)
 	if divisor.lc==@one;
@@ -894,7 +895,7 @@ def Polynomial.gcd2sZp(prime,a,b)
 		q,a=a.divmodZp(b,prime);
 		x=(x-q*u).coeff_to_Zp(prime); y=(y-q*v).coeff_to_Zp(prime)
 		if a.zero?; return b,u,v; end
-		q,b=b.divmodZp(a,prime); 
+		q,b=b.divmodZp(a,prime);
 		u=(u-q*x).coeff_to_Zp(prime); v=(v-q*y).coeff_to_Zp(prime)
 	end
 end
@@ -952,10 +953,10 @@ def countSolution(a=-Infinity,b=Infinity, countRedundancy=true)
 	elsif (a==-Infinity)||(b==Infinity);
 	elsif a.kind_of?(Numeric)&&b.kind_of?(Numeric)&&(a>=b); return 0
 	end
-	if a.kind_of?(Numeric) and substitute(a)==0 then 
+	if a.kind_of?(Numeric) and substitute(a)==0 then
 		return (self/Polynomial.new([-a,1],1)).countSolution(a,b,countRedundancy);
 	end;
-	if b.kind_of?(Numeric) and substitute(b)==0 then 
+	if b.kind_of?(Numeric) and substitute(b)==0 then
 		return (self/Polynomial.new([-b,1],1)).countSolution(a,b,countRedundancy);
 	end;
 	gcd_s,sturm = self.getSturm
@@ -1016,7 +1017,7 @@ module Factorization
 # Factorize a polynomial
 #	Let  p:prime.
 #(1) Let Ap be A in Zp<t>.
-#	if Ap=1 ;  Apd:=1; Resume. 
+#	if Ap=1 ;  Apd:=1; Resume.
 #(2) Search  A'p s.t.  A'p | Apd in Zp.
 #(3)	Check of A' | A in Z[t]
 #
@@ -1039,7 +1040,7 @@ V0=[]; V1=[]; V1nS=[]
 
 def  checkDivZp (dividend,divisor,prime) # true if divisible in Zp
 # q,r=dividend.divmodZp(divisor,prime); return r.zero?
-degR=dividend.degree 
+degR=dividend.degree
 degD=divisor.degree
 if degR < degD
 	return false
@@ -1087,7 +1088,7 @@ f=f.substitute_reverse(lc)/lc; # f=(f*(Number.powerI(lc,f.degree-1))).substitute
 # g=g.coeff_to_Zp(prime,false)
 g=(g*Number.inv(g.lc,prime)).substitute_reverse(lc,prime)
 q,r=f.divmodI(g)
-if r.zero?; 
+if r.zero?;
 	g=g.substitute(Poly("x")*lc).coeff_to_Z
 	q,r=PolyN.divmodI(g)
 	PolyN.array.replace(q.array); Factor.push(g);
@@ -1099,7 +1100,7 @@ h,r=f.divmodZp(g,prime)
 ### How to bound iteration ? ###
 # F= fk x^k +...+f1 x^1+f0,  G= gl x^l +...+gx x^1+g0
 # Let fL2= sqrt(|fk|^2+...+|f0|^2)* (gl/fk *2^l),  gL1= (|gl|+..+|g0|)
-# then  gL1<= fL2. 
+# then  gL1<= fL2.
 # Iterate until |max coefficient of g| < gL1 <= fL2 < pn/2.
 # (Note thet f.lc==1, g.lg==1, pn=prime^n)
 # Let fMax=(max coefficient of f).
@@ -1165,7 +1166,7 @@ return true,polyF
 end
 
 
-def setV0Tbl(degD) # table of PolyN. 
+def setV0Tbl(degD) # table of PolyN.
 # Elements are non-zero, because PolyN has no factor (x-a) in this range
 V0.clear; for i in (0..degD); V0[i]=PolyN.substitute(i-(degD.div(2))).abs; end
 end
@@ -1203,13 +1204,13 @@ while ((-v0i-v1i).div(prime)<=a)&&(a<=(v0i-v1i).div(prime))
 					#return true
 				end
 			end
-		else 
+		else
 			if setVal(ite+1,degD,prime); return true;end
 		end
 	end
 	if a<=0;a=1-a; if a>(v0i-v1i).div(prime); a=-a; end
 	else    a=-a; if a<(-v0i-v1i).div(prime); a=1-a; end
-	end 
+	end
 end
 return false
 end
@@ -1305,7 +1306,7 @@ for i in 0..n-1
 		for j1 in 0..n-1;
 			if j1 != j
 				d=((prime-q[i][j1])*pvr)%prime
-				for i1 in 0..n-1; 
+				for i1 in 0..n-1;
 					q[i1][j1]= (q[i1][j1]+d*q[i1][j])%prime
 				end
 			end
@@ -1333,7 +1334,7 @@ end
 
 def genFactors(f,uList,prime)
 gcdList1=[];
-uList.each{|u| 
+uList.each{|u|
 	for i in 0..prime-1;
 		g=Polynomial.gcdZp(prime, f,u+i);
 		if g.degree>0; gcdList1.push(g);end
@@ -1393,15 +1394,15 @@ def setPolyB(depth,dpoly,prime)
 end
 
 def setPolyBerlekamp(prime)
-f=PolyM.coeff_to_Zp(prime) 
+f=PolyM.coeff_to_Zp(prime)
 #printf "PolyM: %s\n",PolyM
-q=getQ(f,prime) 
+q=getQ(f,prime)
 # printQ(q)
 uList=solveQ1(q,prime)
 #printf "uList:%s\n",uList.join(", ")
-factors=genFactors(f,uList,prime) 
+factors=genFactors(f,uList,prime)
 #printf "factors:%s\n", factors.join(", ")
-FactorP.replace(factors) 
+FactorP.replace(factors)
 #printf "FactorP:%s\n", FactorP.join(", ")
 setPolyB( 0, Poly("1"), prime )
 end
@@ -1425,7 +1426,7 @@ while true
 		if (i>0)&&checkZp(i,prime)&&(PolyN.degree<degD*2);
 			throw(:setPolyTag)
 		end
-	else 
+	else
 		setPoly2(d-1,prime,degD)
 	end
 	if i<=c;i=prime-i-1; if i==c;return;end; else i=prime-i; end
@@ -1467,7 +1468,7 @@ end
 # From here, we can assume that the polynmial has no factor (x-a), |a|<=degN/4
 
 # With setPoly and setVal/setPolyR,
-# time order for setPoly may be 
+# time order for setPoly may be
 #     ~ k*prime^(degN/2)  , k=?
 # time order for setVal
 #     ~ l*(2fp/prime)^(degN/2),  l=?
@@ -1520,7 +1521,7 @@ end
 def factorize(p) # wrapper of factorizeSqrFree(p)
 sqrF=p.coeff_to_Z.squareFreeDecomposition
 factorA=[]
-sqrF.each_with_index{|f,i| 
+sqrF.each_with_index{|f,i|
 	if f.degree>0; ff=factorizeSqrFree(f);
 		i.times{ ff.each{|ffc| factorA.push(ffc.clone)}};
 	end;
