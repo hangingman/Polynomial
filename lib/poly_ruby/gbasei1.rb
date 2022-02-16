@@ -6,12 +6,12 @@
 # K.Kodama 2000-01-20
 #      first version
 #
-# This module is distributed freely in the sence of 
+# This module is distributed freely in the sence of
 # GPL(GNU General Public License).
 ##############################
 
-require "polynomial"
-require "pqueue"
+require "poly_ruby/polynomial"
+require "poly_ruby/pqueue"
 
 module GBaseI1
 
@@ -90,7 +90,7 @@ end
 def getGBaseI1(fList)
 # INITIALIZATION:
 GBase.clear
-fList.each{|x| 
+fList.each{|x|
 		if not x.zero? then GBase.push(x.clone); end;
 }
 if 0==GBase.size then return []; end;
