@@ -82,8 +82,8 @@ GNU General Public License(GPL).
    substitute(x)
        substitute x. "x" admit Integer, Rational, Float, Polynomial....
    substitute_reverse(a=1,m=0)
-	  (self*(a^(degree))).substitute(x/a) (mod m)
-	  e.g. x^3 + x^2 + x + 1 --> x^3 + a x^2 + a^2 x + a^3
+          (self*(a^(degree))).substitute(x/a) (mod m)
+           e.g. x^3 + x^2 + x + 1 --> x^3 + a x^2 + a^2 x + a^3
    factorize
        factorize "integer" coefficient polynomial
        return [factor1, factir2,...]

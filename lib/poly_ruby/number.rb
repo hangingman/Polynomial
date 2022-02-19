@@ -96,7 +96,7 @@ module Number
          primitive root modulo p.
      factorize(n)
          factorize n. return sorted list [p1,p2,p3,...]
- 	  prime_factors(n,upperLimit=0)
+          prime_factors(n,upperLimit=0)
          return [p1,p2,....] if upperLimit==0
          return m,[p1,p2,....] if upperLimit!=0.
                m is co-factor along [p1,p2...]
@@ -128,7 +128,7 @@ module Number
          make a list of primes up to n
          This set the list on Number::PrimeList[]
      digit_base(n,b)
-		return number of digit of n in base b.
+                return number of digit of n in base b.
         i.e. return k such that b^(k-1) <= n < b^k.
      i_to_notation_array(i,b)
          return array of coefficients of notation of base b.
@@ -683,15 +683,6 @@ module Number
     p.coeff_round
     return p
   end
-
-=begin
-		 d=-8
-		 #d=-7
-		 # j((D+sqrt(D))/2) is a root of the polynomial
-		 j=Number.j_invariant(Complex(d.to_f,Math.sqrt(-d.to_f))/2.0)
-		 f=hilbert_class_poly(d)
-		 printf "f=h(%s)=%s, f(%s)=%s\n",d,f, j,f.substitute(j)
-=end
 
   def factorize(n)
     # factorization
