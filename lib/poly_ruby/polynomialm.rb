@@ -1,3 +1,4 @@
+# coding: euc-jp
 # PolynomialM : polynomial class of multi variable
 # Monomial : monomial class of multi variable
 #
@@ -7,14 +8,14 @@
 # K.Kodama(kodama@kobe-kosen.ac.jp) 2000-01-30
 #   first(experimental) version
 #
-# This module is distributed freely in the sence of 
+# This module is distributed freely in the sence of
 # GPL(GNU General Public License).
 ############################################
 #
 # class PolynomialM
 #
 # ARITHMETIC:
-# +, -, *, /, %, 
+# +, -, *, /, %,
 # **(n)
 #      "n" be Integer
 # divmod(divisors)
@@ -26,7 +27,7 @@
 #      divide in Zp
 # divmodI(divisors)
 #      divide in Z
-#      quotient は Integer係数で得ます. 
+#      quotient は Integer係数で得ます.
 #      係数の丸めは leading term の剰余が非負になる方向に行います.
 # substitute(list) # list is Hash of "var"=>val
 #     value admit Integer, Rational, Float, Polynomial, PolynomialM....
@@ -85,7 +86,7 @@
 #          Float, Complex 係数の動作は保証しない.
 # coeff_to_f
 #      converts each element to Float
-# coeff_truncate 
+# coeff_truncate
 #      truncate each coefficient to Integer
 # normalize!
 # sort!
@@ -138,17 +139,16 @@
 #       divide.  Assume self.divisible?(other)
 # totalDegree
 # <=>
-#       1: self>m, 0: self=m, -1: self<m 
+#       1: self>m, 0: self=m, -1: self<m
 # lex(m),revlex(m),deglex(m),degrevlex(m)
 #        Note that revlex is not a term order.
-# 
+#
 #####################################
 # NOT IMPLEMENTED or IMPERFECT
 #  PolynomialM#<=>(other)
 
-require "rational"
-require "number"
-require "polynomial"
+require "poly_ruby/number"
+require "poly_ruby/polynomial"
 
 
 
@@ -165,13 +165,13 @@ end
 def PolynomialM(poly_arg1=0,*poly_arg2)
     case poly_arg1
     when PolynomialM; return poly_arg1
-    when Numeric; 
+    when Numeric;
 		if poly_arg2[0].kind_of?(Hash);
 			#coefficient and power product like Monomial
 			return PolynomialM.new([Monomial(poly_arg1,poly_arg2[0])])
 		else return PolynomialM.new([Monomial.new(poly_arg1,{})])
 		end
-	when String; 
+	when String;
 		# generate var-names as variables in Ruby
 		# and eval the expression
 		poly_str=PolyWork.cnv_prog_format(poly_arg1)
@@ -190,7 +190,7 @@ def PolynomialM(poly_arg1=0,*poly_arg2)
 		if poly_arg1[0].kind_of? Monomial
 			return PolynomialM.new(poly_arg1) # Array of Monomial
 		else; # A generating function. May be.
-			return PolynomialM(Polynomial(poly_arg1)) 
+			return PolynomialM(Polynomial(poly_arg1))
 		end
     else; raise TypeError
     end
@@ -474,7 +474,7 @@ return self.revlex(m)
 end
 
 
-# 1: self>m, 0: self=m, -1: self<m 
+# 1: self>m, 0: self=m, -1: self<m
 def <=>(m)
 	case TermOrder[0]
 	when "lex"; return self.lex(m)
@@ -529,7 +529,7 @@ end
 
 
 def normalize!
-@monomials.each_with_index{|m,i| 
+@monomials.each_with_index{|m,i|
 	if m.coeff==0; @monomials[i]=nil; # 係数 0の項を除く
 	else @monomials[i].normalize! # 単項式の正規化
 	end
@@ -649,7 +649,7 @@ end
 
 def negate
 p=PolynomialM.new
-@monomials.each{|m| p.monomials.push(-m)} 
+@monomials.each{|m| p.monomials.push(-m)}
 return p
 end
 
@@ -672,7 +672,7 @@ if other.kind_of?(PolynomialM);
 	#	elsif i2>=s2; l=1
 	#	else l=(m1 <=> m2)
 	#	end
-	#	if l==0; 
+	#	if l==0;
 	#		m3=m1+m2
 	#		p3.monomials.push(m3);
 	#		i1=i1+1;i2=i2+1; m1=p1.monomials[i1]; m2=p2.monomials[i2]
