@@ -4,7 +4,7 @@ require "poly_ruby/rationalpolym"
 
 RSpec.describe RationalPolyM do
 
-  skip "NameError: undefined local variable or method `x' for RSpec::ExampleGroups::RationalPolyM::GivenSomeRationalPolynomials:Class" do # Given some rational polynomials
+  skip "NameError: undefined local variable or method `x'" do # Given some rational polynomials
     r1=RationalPolyM("x^2+1","y+2")
     r2=RationalPolyM("y+2","x+1")
 

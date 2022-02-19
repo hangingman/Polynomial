@@ -1,4 +1,4 @@
-# coding: euc-jp
+# coding: utf-8
 # RationalPoly
 #
 ############################################
@@ -34,9 +34,9 @@
 #       polynomial approximation
 #   to_s
 #   coeff_to_Z
-#       RationalËô¤ÏInteger·¸¿ô¤Î¾ì¹ç, Í­Íı¿ô¤ÇÌóÊ¬¤·¤Æ, À°¿ô·¸¿ô¤Ë¤¹¤ë.
+#       Rationalåˆã¯Integerä¿‚æ•°ã®å ´åˆ, æœ‰ç†æ•°ã§ç´„åˆ†ã—ã¦, æ•´æ•°ä¿‚æ•°ã«ã™ã‚‹.
 #       Bugs.
-#          Float, Complex ·¸¿ô¤ÎÆ°ºî¤ÏÊİ¾Ú¤·¤Ê¤¤.
+#          Float, Complex ä¿‚æ•°ã®å‹•ä½œã¯ä¿è¨¼ã—ãªã„.
 # TESTING:
 #   ==
 #   zero?

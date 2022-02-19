@@ -17,7 +17,7 @@ def sampleHyperReal
 	print "-- Let f1=(3*x**2-x-2)/(2*x**2-x-1).\n"
 	
 	####### 0/0 (inf)/(inf)
-	# x=1 # case of normal Integer.  0/0=ZeroDivisionError�ˤʤ�.
+	# x=1 # case of normal Integer.  0/0=ZeroDivisionErrorになる.
 	# printf "f1(%s)=%s\n",x, f1(x)
 
 	# x=1.0 # case of normal Float. 0.0/0.0=NaN.

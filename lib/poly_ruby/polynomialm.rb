@@ -1,4 +1,4 @@
-# coding: euc-jp
+# coding: utf-8
 # PolynomialM : polynomial class of multi variable
 # Monomial : monomial class of multi variable
 #
@@ -27,29 +27,29 @@
 #      divide in Zp
 # divmodI(divisors)
 #      divide in Z
-#      quotient ¤Ï Integer·¸¿ô¤ÇÆÀ¤Ş¤¹.
-#      ·¸¿ô¤Î´İ¤á¤Ï leading term ¤Î¾êÍ¾¤¬ÈóÉé¤Ë¤Ê¤ëÊı¸ş¤Ë¹Ô¤¤¤Ş¤¹.
+#      quotient ã¯ Integerä¿‚æ•°ã§å¾—ã¾ã™.
+#      ä¿‚æ•°ã®ä¸¸ã‚ã¯ leading term ã®å‰°ä½™ãŒéè² ã«ãªã‚‹æ–¹å‘ã«è¡Œã„ã¾ã™.
 # substitute(list) # list is Hash of "var"=>val
 #     value admit Integer, Rational, Float, Polynomial, PolynomialM....
-#     ÂåÆş¤Ï¸½ºß¤Î¼°¤ËÂĞ¤·¤Æ°ìµ¤¤Ë¹Ô¤¤¤Ş¤¹.
-#     Îã¤¨¤Ğ:
+#     ä»£å…¥ã¯ç¾åœ¨ã®å¼ã«å¯¾ã—ã¦ä¸€æ°—ã«è¡Œã„ã¾ã™.
+#     ä¾‹ãˆã°:
 #     f1=PolynomialM("x+y^2")
 #     f2=f1.substitute("x"=>PolynomialM("y"),"y"=>PolynomialM("x"))
-#     ¤Ç x, y ¤¬Æş¤ìÂØ¤ï¤ê x^2+y ¤òÆÀ¤Ş¤¹.
+#     ã§ x, y ãŒå…¥ã‚Œæ›¿ã‚ã‚Š x^2+y ã‚’å¾—ã¾ã™.
 # derivative(vars) # vars is Array of var names
 #    derivative
-#    ÀèÆ¬¤ÎÊÑ¿ô¤«¤é½ç¤ËÊĞÈùÊ¬¤·¤Ş¤¹.
+#    å…ˆé ­ã®å¤‰æ•°ã‹ã‚‰é †ã«åå¾®åˆ†ã—ã¾ã™.
 #    f.derivative(["x","x","y"])
 # integral(vars)  # vars is Array of var names
 #     integral
-#    ÀèÆ¬¤ÎÊÑ¿ô¤«¤é½ç¤ËÀÑÊ¬¤·¸¶»Ï´Ø¿ô¤òµá¤á¤Ş¤¹.
-#    ÀÑÊ¬Äê¿ô¤Ï¹ÍÎ¸¤·¤Ş¤»¤ó.
+#    å…ˆé ­ã®å¤‰æ•°ã‹ã‚‰é †ã«ç©åˆ†ã—åŸå§‹é–¢æ•°ã‚’æ±‚ã‚ã¾ã™.
+#    ç©åˆ†å®šæ•°ã¯è€ƒæ…®ã—ã¾ã›ã‚“.
 # lt      leading term
 # lc      leading coefficient
 # lp      leading power product
-# coeff(var,deg) # var ¤ÎÂ¿¹à¼°¤È¸«¤Æ¤Î deg ¼¡¤Î·¸¿ôÂ¿¹à¼°¤òÊÖ¤¹.
-# maxdeg(var) # var ¤ÎÂ¿¹à¼°¤È¸«¤Æ¤ÎºÇ¹â¼¡¿ô
-# mindeg(var) # var ¤ÎÂ¿¹à¼°¤È¸«¤Æ¤ÎºÇÄã¼¡¿ô
+# coeff(var,deg) # var ã®å¤šé …å¼ã¨è¦‹ã¦ã® deg æ¬¡ã®ä¿‚æ•°å¤šé …å¼ã‚’è¿”ã™.
+# maxdeg(var) # var ã®å¤šé …å¼ã¨è¦‹ã¦ã®æœ€é«˜æ¬¡æ•°
+# mindeg(var) # var ã®å¤šé …å¼ã¨è¦‹ã¦ã®æœ€ä½æ¬¡æ•°
 # lcm_coeff_denom
 #     lcm of denominator of coefficients as Rarional
 # gcd_coeff_num
@@ -81,9 +81,9 @@
 # coeff_to_Zp(p)
 #     Convert each coefficient to (mod p) for Integer coefficient polynomial.
 # coeff_to_Z
-#     Rational·¸¿ôÂ¿¹à¼°¤òÄê¿ôÇÜ¤·¤Æ Z·¸¿ô¤«¤Ä·¸¿ô¤ÎGCD¤ò1¤Ë¤¹¤ë.
+#     Rationalä¿‚æ•°å¤šé …å¼ã‚’å®šæ•°å€ã—ã¦ Zä¿‚æ•°ã‹ã¤ä¿‚æ•°ã®GCDã‚’1ã«ã™ã‚‹.
 #       Bug.
-#          Float, Complex ·¸¿ô¤ÎÆ°ºî¤ÏÊİ¾Ú¤·¤Ê¤¤.
+#          Float, Complex ä¿‚æ•°ã®å‹•ä½œã¯ä¿è¨¼ã—ãªã„.
 # coeff_to_f
 #      converts each element to Float
 # coeff_truncate
@@ -234,10 +234,10 @@ def to_s(format="text")
     when "texm"; timeC=""; timeV="";power1="^{";power2="}"; ms="$"; me="$"
     when "prog"; timeC="*"; timeV="*"; power1="**(";power2=")"; ms=""; me=""
     end
-	# timeC: ·¸¿ô¤ÈÊÑ¿ô´Ö¤Îµ­¹æ
-	# timeV: ÊÑ¿ô´Ö¤ÎÊ¬Î¥µ­¹æ
-	# power1, power2: »Ø¿ôÉô¤Î³«»Ï¤È½ªÎ»
-	# ms,me: ¿ô¼°Á´ÂÎ¤Î¤¯¤¯¤ê
+	# timeC: ä¿‚æ•°ã¨å¤‰æ•°é–“ã®è¨˜å·
+	# timeV: å¤‰æ•°é–“ã®åˆ†é›¢è¨˜å·
+	# power1, power2: æŒ‡æ•°éƒ¨ã®é–‹å§‹ã¨çµ‚äº†
+	# ms,me: æ•°å¼å…¨ä½“ã®ããã‚Š
 	c=@coeff
 	if c<0; sign="-";c=-c;else; sign="";end
 	if c.kind_of?(Rational)&&(c.denominator != 1);
@@ -329,7 +329,7 @@ else
 end
 end
 
-# Rational ·¸¿ô¤Ç ³ä¤ì¤ë¤«¤É¤¦¤«¤òÄ´¤Ù¤ë.
+# Rational ä¿‚æ•°ã§ å‰²ã‚Œã‚‹ã‹ã©ã†ã‹ã‚’èª¿ã¹ã‚‹.
 def divisible?(divisor)
 if @coeff==0;return false;end
 divisor.power.each_pair{|v,d| if @power[v]<d;return false;end}
@@ -349,7 +349,7 @@ else
 end
 end
 
-# Integer ·¸¿ô¤Î term ¤È¤·¤Æ³ä¤ì¤ë¤«¤É¤¦¤«¤òÄ´¤Ù¤ë. ·¸¿ô¤ÏÌµ»ë.
+# Integer ä¿‚æ•°ã® term ã¨ã—ã¦å‰²ã‚Œã‚‹ã‹ã©ã†ã‹ã‚’èª¿ã¹ã‚‹. ä¿‚æ•°ã¯ç„¡è¦–.
 def divisibleI?(divisor)
 if (0<=@coeff)&&(@coeff<divisor.coeff.abs);return false;end
 divisor.power.each_pair{|v,d| if @power[v]<d;return false;end}
@@ -513,10 +513,10 @@ def to_s(format="text")
     when "texm"; timeC=""; timeV="";power1="^{";power2="}"; ms="$"; me="$"
     when "prog"; timeC="*"; timeV="*"; power1="**(";power2=")"; ms=""; me=""
     end
-	# timeC: ·¸¿ô¤ÈÊÑ¿ô´Ö¤Îµ­¹æ
-	# timeV: ÊÑ¿ô´Ö¤ÎÊ¬Î¥µ­¹æ
-	# power1, power2: »Ø¿ôÉô¤Î³«»Ï¤È½ªÎ»
-	# ms,me: ¿ô¼°Á´ÂÎ¤Î¤¯¤¯¤ê
+	# timeC: ä¿‚æ•°ã¨å¤‰æ•°é–“ã®è¨˜å·
+	# timeV: å¤‰æ•°é–“ã®åˆ†é›¢è¨˜å·
+	# power1, power2: æŒ‡æ•°éƒ¨ã®é–‹å§‹ã¨çµ‚äº†
+	# ms,me: æ•°å¼å…¨ä½“ã®ããã‚Š
 	s=""; addS=""
 	@monomials.each{|m|
 		if (m.coeff>0); s=s+addS;end
@@ -530,13 +530,13 @@ end
 
 def normalize!
 @monomials.each_with_index{|m,i|
-	if m.coeff==0; @monomials[i]=nil; # ·¸¿ô 0¤Î¹à¤ò½ü¤¯
-	else @monomials[i].normalize! # Ã±¹à¼°¤ÎÀµµ¬²½
+	if m.coeff==0; @monomials[i]=nil; # ä¿‚æ•° 0ã®é …ã‚’é™¤ã
+	else @monomials[i].normalize! # å˜é …å¼ã®æ­£è¦åŒ–
 	end
 }
 @monomials.compact!;
 self.sort!
-i0=0; # power product ¤¬Æ±¤¸¹à¤¬Ê£¿ô¤¢¤ì¤Ğ¤Ş¤È¤á¤ë.
+i0=0; # power product ãŒåŒã˜é …ãŒè¤‡æ•°ã‚ã‚Œã°ã¾ã¨ã‚ã‚‹.
 for i1 in 1..@monomials.size-1
 	if 0==(@monomials[i0]<=>@monomials[i1]);
 		@monomials[i0] += @monomials[i1];
@@ -575,7 +575,7 @@ return (lc.abs==1)||(lc.kind_of?(Rational))||(lc.kind_of?(Float))
 end
 
 
-def coeff(var,deg) # v ¤ÎÂ¿¹à¼°¤È¸«¤Æ¤Î deg ¼¡¤Î·¸¿ôÂ¿¹à¼°¤òÊÖ¤¹.
+def coeff(var,deg) # v ã®å¤šé …å¼ã¨è¦‹ã¦ã® deg æ¬¡ã®ä¿‚æ•°å¤šé …å¼ã‚’è¿”ã™.
 p=PolynomialM.new
 @monomials.each{|m|
 	if m[var]==deg;m1=m.clone; m1.delete(var);p.monomials.push(m1);end
@@ -584,7 +584,7 @@ p.normalize!; return p
 end
 
 
-def vars # ¼°¤Ë´Ş¤Ş¤ì¤ë ÊÑ¿ôÌ¾°ìÍ÷
+def vars # å¼ã«å«ã¾ã‚Œã‚‹ å¤‰æ•°åä¸€è¦§
 vs=[]
 @monomials.each{|m|
 	m.powers.each_key{|v|
@@ -596,13 +596,13 @@ vs.sort!{|v1,v2| vorder.index(v1)<=>vorder.index(v2)}
 return vs
 end
 
-def maxdeg(var) # var ¤ÎÂ¿¹à¼°¤È¸«¤Æ¤ÎºÇ¹â¼¡¿ô
+def maxdeg(var) # var ã®å¤šé …å¼ã¨è¦‹ã¦ã®æœ€é«˜æ¬¡æ•°
 deg=0
 @monomials.each{|m|	if deg<m.power[var]; deg=m.power[var];end}
 return deg
 end
 
-def mindeg(var) # var ¤ÎÂ¿¹à¼°¤È¸«¤Æ¤ÎºÇÄã¼¡¿ô
+def mindeg(var) # var ã®å¤šé …å¼ã¨è¦‹ã¦ã®æœ€ä½æ¬¡æ•°
 deg=nil
 @monomials.each{|m| if (deg==nil)||(deg<m[var]); deg=m[var];end}
 if deg==nil; deg=0;end
@@ -951,7 +951,7 @@ f.normalize!
 return f
 end
 
-def coeff_to_Z # Rational·¸¿ôÂ¿¹à¼°¤òÄê¿ôÇÜ¤·¤Æ Z·¸¿ô¤«¤Ä·¸¿ô¤ÎGCD¤ò1¤Ë¤¹¤ë.
+def coeff_to_Z # Rationalä¿‚æ•°å¤šé …å¼ã‚’å®šæ•°å€ã—ã¦ Zä¿‚æ•°ã‹ã¤ä¿‚æ•°ã®GCDã‚’1ã«ã™ã‚‹.
 f=self*self.lcm_coeff_denom
 f=f/f.gcd_coeff_num
 f=f.coeff_truncate

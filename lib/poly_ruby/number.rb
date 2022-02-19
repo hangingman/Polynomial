@@ -1,4 +1,4 @@
-# coding: euc-jp
+# coding: utf-8
 #module Number
 #
 #######################################
@@ -847,7 +847,7 @@ module Number
 	end
 
 
-	def gcd(a,*b) # gcdS ¤Î wrapper
+	def gcd(a,*b) # gcdS ã® wrapper
 		case a
 		when Array;
 		when Integer; a=[a]+b
@@ -859,9 +859,9 @@ module Number
 
 
 	def gcd2s(a,b)
-		# a,b ¤ËÂĞ¤· gcd(a,b)= ax+by ¤È¤Ê¤ë x,y ¤ò gcd ¤È¤È¤â¤Ëµá¤á¤ë.
-		# a_= xa+yb, b_= ua+vb ¤È½ñ¤¯¤È
-		# a=1a+0b, b=0a+1b ¤«¤é»Ï¤á¤Æ...
+		# a,b ã«å¯¾ã— gcd(a,b)= ax+by ã¨ãªã‚‹ x,y ã‚’ gcd ã¨ã¨ã‚‚ã«æ±‚ã‚ã‚‹.
+		# a_= xa+yb, b_= ua+vb ã¨æ›¸ãã¨
+		# a=1a+0b, b=0a+1b ã‹ã‚‰å§‹ã‚ã¦...
 		x=1; y=0; u=0;v=1
 		while true
 			if b==0;return a,x,y;end
@@ -873,14 +873,14 @@ module Number
 
 
 
-	def gcd2(a,*b) # gcd2s ¤Î wrapper
+	def gcd2(a,*b) # gcd2s ã® wrapper
 		case a
 		when Array;
 		when Integer; a=[a]+b
 		else  raise TypeError
 		end
-		# a[] ¤Î gcd ¤È
-		# gcd=a[0]*xj[0]+a[1]*xj[1]+...+a[n]*xj[n] ¤È¤Ê¤ë·¸¿ô xj[] ¤òÊÖ¤¹.
+		# a[] ã® gcd ã¨
+		# gcd=a[0]*xj[0]+a[1]*xj[1]+...+a[n]*xj[n] ã¨ãªã‚‹ä¿‚æ•° xj[] ã‚’è¿”ã™.
 		g=0; xj=[]; # gcd up to i
 		a.each{|b|
 			g,x,y=gcd2s(b,g)
@@ -914,9 +914,9 @@ module Number
 
 
 	def gcd2sC(a,b)
-		# a,b ¤ËÂĞ¤· gcd(a,b)= ax+by ¤È¤Ê¤ë x,y ¤ò gcd ¤È¤È¤â¤Ëµá¤á¤ë.
-		# a'= xa+yb, b'= ua+vb ¤È½ñ¤¯¤È
-		# a=1a+0b, b=0a+1b ¤«¤é»Ï¤á¤Æ...
+		# a,b ã«å¯¾ã— gcd(a,b)= ax+by ã¨ãªã‚‹ x,y ã‚’ gcd ã¨ã¨ã‚‚ã«æ±‚ã‚ã‚‹.
+		# a'= xa+yb, b'= ua+vb ã¨æ›¸ãã¨
+		# a=1a+0b, b=0a+1b ã‹ã‚‰å§‹ã‚ã¦...
 		x=Complex(1); y=Complex(0); u=Complex(0);v=Complex(1)
 		while true
 			if b==0;return a,x,y;end
@@ -927,15 +927,15 @@ module Number
 	end
 
 
-	def gcd2C(a,*b) # gcd2sC ¤Î wrapper
+	def gcd2C(a,*b) # gcd2sC ã® wrapper
 		# complex GCD of Gauss integer
 		case a
 		when Array;
 		when Integer; a=[a]+b
 		else  raise TypeError
 		end
-		# a[] ¤Î gcd ¤È
-		# gcd=a[0]*xj[0]+a[1]*xj[1]+...+a[n]*xj[n] ¤È¤Ê¤ë·¸¿ô xj[] ¤òÊÖ¤¹.
+		# a[] ã® gcd ã¨
+		# gcd=a[0]*xj[0]+a[1]*xj[1]+...+a[n]*xj[n] ã¨ãªã‚‹ä¿‚æ•° xj[] ã‚’è¿”ã™.
 		g=Complex(0); xj=[]; # gcd up to i
 		a.each{|b|
 			g,x,y=gcd2sC(b,g)
@@ -1006,7 +1006,7 @@ module Number
 
 
 	def notation_factorial_to_i(c)
-		# notation_factorial(i) ¤ÎµÕ
+		# notation_factorial(i) ã®é€†
 		i=0; d=c.size-1
 		while d>=1; i=(i+c[d])*d;d=d-1; end
 		return i

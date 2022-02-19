@@ -1,4 +1,4 @@
-# coding: euc-jp
+# coding: utf-8
 =begin
  class Polynomial
     Class of 1 variable polynomial.
@@ -1021,9 +1021,9 @@ module Factorization
 #(2) Search  A'p s.t.  A'p | Apd in Zp.
 #(3)	Check of A' | A in Z[t]
 #
-# Zp ¾å¤Ç¤Î°ø»Ò¤Î¿äÄê¤ò2¼ï
-# Zp¾å¤Î°ø»Ò¤«¤é Z¾å¤Î°ø»Ò¤Î¹½À®¤ò 2¼ï »ý¤Ã¤Æ¤ª¤ê
-# °·¤¦¼¡¿ô¤Ë¤è¤Ã¤ÆÀÚÂØ¤¨¤Æ»ÈÍÑ¤·¤Æ¤¤¤ë.
+# Zp ä¸Šã§ã®å› å­ã®æŽ¨å®šã‚’2ç¨®
+# Zpä¸Šã®å› å­ã‹ã‚‰ Zä¸Šã®å› å­ã®æ§‹æˆã‚’ 2ç¨® æŒã£ã¦ãŠã‚Š
+# æ‰±ã†æ¬¡æ•°ã«ã‚ˆã£ã¦åˆ‡æ›¿ãˆã¦ä½¿ç”¨ã—ã¦ã„ã‚‹.
 
 
 ### as module variables ###
@@ -1128,8 +1128,8 @@ end
 
 
 ##### expand DpolyMs to Z-coefficient with simple try&error #####
-# °ø»Ò¤Ë -PolyN.degree/4..PolyN.degree/4 ¤ÎÀ°¿ô¤ò
-# ÂåÆþ¤·¤¿ÃÍ¤ò¿äÄê¤·¤Æ, °ø»Ò¤ò¹½À®¤¹¤ë.
+# å› å­ã« -PolyN.degree/4..PolyN.degree/4 ã®æ•´æ•°ã‚’
+# ä»£å…¥ã—ãŸå€¤ã‚’æŽ¨å®šã—ã¦, å› å­ã‚’æ§‹æˆã™ã‚‹.
 # degD=DpolyM.degree for almost part.
 
 def  setPolyR(degD,prime)
@@ -1230,7 +1230,7 @@ if DpolyM.degree>=5
 else
 	i=1
 	while i<prime
-		# Æ¬¹à¤Î°ø»Ò¤òÄ´À°. PolyN,DpolyM ¤¬ monic ¤Ê¤é,¤³¤ì¤ÏÉÔÍ×.
+		# é ­é …ã®å› å­ã‚’èª¿æ•´. PolyN,DpolyM ãŒ monic ãªã‚‰,ã“ã‚Œã¯ä¸è¦.
 		dpolym=(DpolyM*i).coeff_to_Zp(prime)
 		if Number.checkDivZ?(PolyN.lc,dpolym.lc,prime)&&
 				Number.checkDivZ?(PolyN[0],dpolym[0],prime);
