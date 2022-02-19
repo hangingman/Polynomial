@@ -6,12 +6,12 @@
 # K.Kodama 2000-02-04
 #      first version
 #
-# This module is distributed freely in the sence of 
+# This module is distributed freely in the sence of
 # GPL(GNU General Public License).
 ##############################
 
-require "polynomialm"
-require "pqueue"
+require "poly_ruby/polynomialm"
+require "poly_ruby/pqueue"
 
 module GBaseI
 
@@ -119,7 +119,7 @@ for i in 0..GBase.size-1
 	if GBase[i].lc<0; GBase[i]=-GBase[i];end
 end
 reductionSameLpI
-# for all saturated subset 
+# for all saturated subset
 GBase.sort!{|f1,f2| f2<=>f1}
 if $0 == __FILE__
 	print "serach Saturated subset\n";
@@ -167,7 +167,7 @@ end
 def getGBaseI(fList)
 # INITIALIZATION:
 GBase.clear
-fList.each{|x| 
+fList.each{|x|
 		if not x.zero? then GBase.push(x.clone); end;
 }
 if 0==GBase.size then return []; end;
@@ -214,7 +214,7 @@ gb=GBaseI.getGBaseI([f1,f2,f3])
 print gb.join(", "),"\n"
 
 
-# sample from 
+# sample from
 #    William W.Adams, Philippe Loustaunau
 #    "An Introduction to Groebner Bases",
 #    AMS GSM(Graduale Study in Mathematics) vol.3

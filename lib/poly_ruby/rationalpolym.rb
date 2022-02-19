@@ -1,3 +1,4 @@
+# coding: utf-8
 # RationalPolyM
 #
 ############################################
@@ -5,7 +6,7 @@
 #
 # Based on rational.rb by Keiju ISHITSUKA(SHL Japan Inc.)
 #
-# This module is distributed freely in the sence of 
+# This module is distributed freely in the sence of
 # Ruby's License.
 ############################################
 # --
@@ -13,7 +14,7 @@
 #   class RationalPolyM
 #
 #   RationalPolyM(a, b) or RPolyM(a, b) --> a/b
-#       a,b admit Numeric,PolynomialM 
+#       a,b admit Numeric,PolynomialM
 #       and String of polynomial.
 #   +, -, *, /, **, %, divmod
 #   abs
@@ -24,9 +25,9 @@
 #   to_poly
 #   to_s
 #   coeff_to_Z
-#       RationalËô¤ÏInteger·¸¿ô¤Î¾ì¹ç, Í­Íı¿ô¤ÇÌóÊ¬¤·¤Æ, À°¿ô·¸¿ô¤Ë¤¹¤ë.
+#       Rationalåˆã¯Integerä¿‚æ•°ã®å ´åˆ, æœ‰ç†æ•°ã§ç´„åˆ†ã—ã¦, æ•´æ•°ä¿‚æ•°ã«ã™ã‚‹.
 #       Bugs.
-#          Float, Complex ·¸¿ô¤ÎÆ°ºî¤ÏÊİ¾Ú¤·¤Ê¤¤.
+#          Float, Complex ä¿‚æ•°ã®å‹•ä½œã¯ä¿è¨¼ã—ãªã„.
 # TESTING:
 #   ==
 #   zero?
@@ -34,8 +35,7 @@
 #   <=>
 #   reduce
 
-require "polynomialm"
-require "rational"
+require "poly_ruby/polynomialm"
 
 def RationalPolyM(a, b = PolynomialM(1))
 	if a.kind_of?(RationalPolyM)
@@ -119,7 +119,7 @@ def + (a)
 		return x + y
 	end
 end
-  
+
 def - (a)
 	return self+(-a)
 end
@@ -142,7 +142,7 @@ def * (a)
 		return x * y
 	end
 end
-  
+
 def / (a)
 	if a.kind_of?(RationalPolyM)
 		if a.zero?; raise ZeroDivisionError, "denometor is 0" ;end
@@ -164,7 +164,7 @@ def / (a)
 		return x / y
 	end
 end
-  
+
 def ** (other)
 	if other.kind_of?(Integer)
 		if other > 0
@@ -243,7 +243,7 @@ def to_poly
 	q,r=@numerator.divmod(@denominator)
 	return q
 end
-  
+
 
 def to_s(format="text")
     case format

@@ -1,0 +1,16 @@
+AllCops:
+  DisabledByDefault: true
+  Exclude:
+    - 'gems/**/*'
+  NewCops: enable
+
+Style/StringLiterals:
+  Enabled: false
+  EnforcedStyle: double_quotes
+
+Style/StringLiteralsInInterpolation:
+  Enabled: false
+  EnforcedStyle: double_quotes
+
+Layout/LineLength:
+  Max: 120

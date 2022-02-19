@@ -7,7 +7,7 @@
 # module GBase
 # getGBase(plist)
 #     plist be Array of PolynomialM
-#     return Array of PolynomialM of Reduced Grobner base 
+#     return Array of PolynomialM of Reduced Grobner base
 #     over field Rational, Complex, Float
 # getGBaseZp(plist,prime)
 #    get Groebner basis on Zp.
@@ -16,11 +16,11 @@
 # K.Kodama 2000-02-01
 #      first version
 #
-# This module is distributed freely in the sence of 
+# This module is distributed freely in the sence of
 # GPL(GNU General Public License).
 ##############################
 
-require "pqueue"
+require "poly_ruby/pqueue"
 
 module GBase
 
@@ -134,7 +134,7 @@ end
 def getGBase(fList)
 # INITIALIZATION:
 GBase.clear
-fList.each{|x| 
+fList.each{|x|
 		if not x.zero? then GBase.push(x.clone); end;
 }
 if 0==GBase.size then return []; end;
@@ -147,7 +147,7 @@ for i in 0..GBase.size-2
 end
 makeGBase; makeMinimalGBase; makeMinimalLcGBase; makeReducedGBase
 # printGb
-GBase.sort!{|f1,f2| f2<=>f1}; 
+GBase.sort!{|f1,f2| f2<=>f1};
 return GBase
 end
 

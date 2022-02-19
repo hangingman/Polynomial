@@ -1,9 +1,10 @@
+# coding: utf-8
 #module Number
 #
 #######################################
 # K.Kodama(kodama@kobe-kosen.ac.jp) 2000-01-09
 #
-# This module is distributed freely in the sence of 
+# This module is distributed freely in the sence of
 # GPL(GNU General Public License).
 #######################################
 
@@ -40,13 +41,13 @@ module Number
      modP(n,p,fold=false) # 0<= modP <p , if fold, -p/2 < modP <= p/2
      rmodP(n,p,fold=false) # 0<= modP <p, if fold, -p/2 < modP <= p/2
           "n" admits Rational.
-     divII(a,b) 
+     divII(a,b)
         return a/b.
         If a,b are Interger, return Rational or Integer
-     divFloor(a,b) 
+     divFloor(a,b)
         return a/b rounded to Integer s.t. 0<=remainder< b.abs
         a,b be Integer,Rational or Float.
-     divRound(a,b) 
+     divRound(a,b)
         return a/b rounded to Integer s.t. -b.abs/2<remainder<= b.abs/2
         a,b be Integer,Rational or Float.
      sqrti(n,p=0)
@@ -55,9 +56,9 @@ module Number
              return Integer x  s.t. x^2<=n<(x+1)^2 .
          else return sqrt mod p. -1 if n quadratic non-residue mod p.
              i.e. x^2==n mod p. 0<=x<p
-     rooti(r,n) 
+     rooti(r,n)
          Integer r-th root of n where n,r positive Integer.
-         return Integer i  s.t. i^r<=n<(i+1)^r 
+         return Integer i  s.t. i^r<=n<(i+1)^r
      cornacchia_p(p,d)
         Solve Diophantine equation x^2+dy^2=p.
         return [x,y].
@@ -71,7 +72,7 @@ module Number
     w4(d)
         w4(D): number of roots of unity in the quadratic order of discriminant D
         for x^2+|D|y^2=4p.
-    lj0(ni,a,b) 
+    lj0(ni,a,b)
         return x,y
         where x in Z/(ni Z) which Legendre-Jacobi symbol (x^3+ax+b, Ni) is 0 or 1
         y^2=x^3+ax+b
@@ -91,7 +92,7 @@ module Number
          a^n modulo m. Same as powerI(a,n,m)
      powerI(a,n,m=0)
          a^n (if m=0), (a^n)%(m)(if m!=0). n: positive Integer
-     primitive_root(p) 
+     primitive_root(p)
          primitive root modulo p.
      factorize(n)
          factorize n. return sorted list [p1,p2,p3,...]
@@ -101,7 +102,7 @@ module Number
                m is co-factor along [p1,p2...]
          sorted list of prime p dividing n upto "upperLimit"
          list __all__ prime factors if upperLimit==0.
-     v(p,s) 
+     v(p,s)
          number of times that the prime p occurs in s.
      getDivisors(n)
         get all divisors of n (1 and n are included).
@@ -136,7 +137,7 @@ module Number
         reverse of above
      i_to_notation_factorial(i)
          return array of coefficients of notation of factorial base
-         i=c[n]n!+c[n-1](n-1)!+...+c[2]2!+c[1]1!, c[0]=0  (i>=0) 
+         i=c[n]n!+c[n-1](n-1)!+...+c[2]2!+c[1]1!, c[0]=0  (i>=0)
      notation_factorial_to_i(c)
         reverse of above
      notation_str_to_i(str,b)
@@ -158,7 +159,7 @@ module Number
 
 require "rational"
 require "complex"
-require "infinity"
+require "poly_ruby/infinity"
 
 
 class Complex
@@ -174,31 +175,31 @@ class Integer
 end;
 
 module Number
-	
+
 	def Inf_IEEE754
 		return 1.0/0.0;
 	end
 	# Inf_IEEE754=Object.new;
-	
+
 	def NaN_IEEE754
 		return 0.0/0.0;
 	end
 	# NaN_IEEE754=Object.new;
-	
-	
+
+
 	def modP(n,p,fold=false) # 0<= modP <p , if fold, -p/2 < modP <= p/2
 		n=((n%p)+p)%p
 		if fold&&(n*2 >p);n=n-p;end
 		return n
 	end
-	
-	
+
+
 	def rmodP(n,p,fold=false) # 0<= modP <p, if fold, -p/2 < modP <= p/2
 		if n.kind_of?(Rational);d=n.denominator; n=n.numerator * inv(d,p);end
 		return modP(n,p,fold)
 	end
-	
-	
+
+
 	def divII(a,b) # return a/b
 		if a.kind_of?(Integer)&&b.kind_of?(Integer);
 			q=a.div(b)
@@ -210,7 +211,7 @@ module Number
 			# a or b is an element of field ?
 			q=a/(b);
 		end
-		qi=q.to_i; if a==(qi*b); return qi;end 
+		qi=q.to_i; if a==(qi*b); return qi;end
 		return q
 	end
 
@@ -223,7 +224,7 @@ module Number
 	def divRound(a,b) # divide s.t. quotient is Integer, -b.abs/2<remainder< b.abs/2
 		q=divFloor(a,b); if (a-b*q)*2>b.abs; q=q+(b<=>0);end
 		return q
-	end 
+	end
 
 	def divmodC(j1,j2) # j1,j2 be Complex
 		# return quotient,remainder. quotient is Gauss integer
@@ -235,7 +236,7 @@ module Number
 	end
 
 
-	def sqrti(n,p=0) 
+	def sqrti(n,p=0)
 		if p==0; # Integer s.t. i^2<=n<(i+1)^2
 			n=n.to_i; if n<=0;return 0; elsif n<=3;return 1; end
 			x=n>>1; y=2; while y<x; x=(x+y)>>1; y=n.div(x); end
@@ -258,9 +259,9 @@ module Number
 			}
 		end;
 	end
-	
-	
-	def rooti(r,n) 
+
+
+	def rooti(r,n)
 		# Integer r-th root of n, s.t. x^r<=n<(x+1)^r for n,r positive Integer
 		r=r.to_i; if r==1;return n; elsif r<1; return 0;elsif r==2; return sqrti(n);end
 		n=n.to_i; if n<=0; return 0;elsif n<1<<r; return 1;end
@@ -286,12 +287,12 @@ module Number
 		s=sqrti(n);
 		if n==s*s; return s; else return -1;end
 	end
-	
+
 	def split_even(n) # return [d,s]  such that n=d*2^s.
 		s=0; d=n-1; while d[0]==0; s=s+1; d=d>>1;end
 		return d,s
 	end;
-	
+
 	def spsp_o?(x,d,s,a)
 		# x is prime or strong pseudo prime of base "a"?
 		# x-1=d*2^s
@@ -313,7 +314,7 @@ module Number
 		# return (a**(x-1)%x == 1)
 		return powerMod(a,x-1,x)==1
 	end
-	
+
 	def rabin_miller?(n) # Rabin-Miller pseudo prime
 		if n==2; return true; elsif n<2; return false; end
 		q,t=split_even(n)
@@ -353,7 +354,7 @@ module Number
 
 	# make a table of primes
 	PrimeList=[2,3];
-	
+
 	def makePrimeList1(n=3)
 		# Simple but very slow.
 		primeMax=PrimeList[PrimeList.length-1]
@@ -442,13 +443,13 @@ module Number
 		end
 		primeMax=nextPrime(primeMax); PrimeList.push(primeMax)
 	end
-	
-	
+
+
 	def makePrimeList(n=3)
 		makePrimeList4(n)
 	end
 
-	
+
 	def prime2?(x)
 		# Using PrimeList but slow.
 		if x%2==0;if x==2;return true;else return false;end;end
@@ -487,8 +488,8 @@ module Number
 		# i.e. g^(p-1)=g^(-2)
 		g=((g%p)+p)%p; return (g**(p-2))%p
 	end
-	
-	
+
+
 	def inv2(g,p)
 		## calculate g^(p-2) using binary notation of p-2.
 		## It loop log_2(n) times.
@@ -511,8 +512,8 @@ module Number
 		while a != 1; q=b.div(a); a,x,b,u=b,u,b-q*a,u-q*x; end
 		return ((x%p+p)%p)
 	end
-	
-	
+
+
 	def inv(g,p)
 		return inv1(g,p)
 	end
@@ -548,7 +549,7 @@ module Number
 			return s;
 		end
 	end;
-	
+
 	def checkDivZ?(a,b,p) # true if exist "k" s.t. (b+k*prime)|a in Z
 		a=a.abs; b=b.abs%p
 		if b==0; return a%p==0; end
@@ -605,10 +606,10 @@ module Number
 			r=b-a
 			if r>0; if a&b&2==2; k=-k;end; b=a; a=r;
 			else a=-r;
-			end 
+			end
 		}
 	end
-	
+
 
 	def cornacchia_p(p,d)
 		# Solve Diophantine equation x^2+dy^2=p.
@@ -623,12 +624,12 @@ module Number
 		c=testSquare(pb/d); if c<0; return [0,0];end;
 		return [b,c]
 	end;
-	
+
 	def cornacchia_4p(p,d)
 		# return integer solution (x,y) for Diophantine equation x^2+|D|y^2=4p
 		# return [0,0] if the solution does not exist
 		# Assume that D==0,1 mod 4, D<0, |D|<4p, p:prime
-		dm=(-d)%4; 
+		dm=(-d)%4;
 		if !((d<0)and(-d<p*4)and((dm==0)or(dm==3)));
 			raise sprintf("bad argument: p=%d, d=%d\n", p,d);
 		end;
@@ -644,21 +645,21 @@ module Number
 		return [b,c]
 	end
 
-	def w4(d) 
+	def w4(d)
 		# w(D): number of roots of unity in the quadratic order of discriminant D
 		if d<-4; return 2;
 		elsif d==-4; return 4;
 		elsif d==-3; return 6;
-		else printf "w(%d): Note that D==0,1 mod 4, D<0.\n", d; # 
+		else printf "w(%d): Note that D==0,1 mod 4, D<0.\n", d; #
 			raise "error in w(d)"
 		end;
 	end;
 
-	def lj0(ni,a,b) 
+	def lj0(ni,a,b)
 		# return x,y
 		# where x in Z/(ni Z) which Legendre-Jacobi symbol (x^3+ax+b, Ni) is 0 or 1
 		# y^2=x^3+ax+b
-		0.upto(ni-1){|x| 
+		0.upto(ni-1){|x|
 			fx=(x*x+a)*x+b
 			if 0<=Number.kronecker(fx,ni);
 				y=Number.sqrti(fx,ni);
@@ -679,13 +680,13 @@ module Number
 		d=q*Number.powerI(d+1,24);
 		return d
 	end
-	
+
 	def j_invariant(r) # r=a+bi
-		# j(r)=j(Er). Er=C/Lr and Lr is the lattice generated by 1 and r. 
+		# j(r)=j(Er). Er=C/Lr and Lr is the lattice generated by 1 and r.
 		# modular invariant of elliptic curve.
 		f=j_delta(r*2)/j_delta(r); s=Number.powerI(256*f+1,3)/f; return s.real.round
 	end;
-	
+
 =begin
 		 # test j
 		 r=Complex(1.0,Math.sqrt(3.0)); printf "j(%s)=%s\n",r, Number.j_invariant(r)
@@ -697,8 +698,8 @@ module Number
 		 #j(0.5+1.322875656i)=-3375
 		 #j(1.414213562i)=8000
 =end
-	
-	
+
+
 	def hilbert_class_poly(d)
 		# Hilbert class polynomial of degree h(D) for the negative discriminant D.
 		# return monic polynomial h(D) in Z[x] of which j((D+sqrt(D))/2) is a root.
@@ -801,9 +802,9 @@ module Number
 			return n,f
 		end
 	end
-	
-	
-	def v(p,s) # v(p,s): number of times that the prime p occurs in s. 
+
+
+	def v(p,s) # v(p,s): number of times that the prime p occurs in s.
 		n=0
 		while true;
 			s,r=s.divmod(p)
@@ -821,7 +822,7 @@ module Number
 		end
 		return divisors
 	end
-	
+
 	def getDivisors(n)
 		# get all divisors of n
 		factors=Number.factorize(n)
@@ -846,7 +847,7 @@ module Number
 	end
 
 
-	def gcd(a,*b) # gcdS ¤Î wrapper
+	def gcd(a,*b) # gcdS ã® wrapper
 		case a
 		when Array;
 		when Integer; a=[a]+b
@@ -855,12 +856,12 @@ module Number
 		g=0; a.each{|x| g=gcdS(x,g)}
 		return g
 	end
-	
+
 
 	def gcd2s(a,b)
-		# a,b ¤ËÂÐ¤· gcd(a,b)= ax+by ¤È¤Ê¤ë x,y ¤ò gcd ¤È¤È¤â¤Ëµá¤á¤ë.
-		# a_= xa+yb, b_= ua+vb ¤È½ñ¤¯¤È
-		# a=1a+0b, b=0a+1b ¤«¤é»Ï¤á¤Æ...
+		# a,b ã«å¯¾ã— gcd(a,b)= ax+by ã¨ãªã‚‹ x,y ã‚’ gcd ã¨ã¨ã‚‚ã«æ±‚ã‚ã‚‹.
+		# a_= xa+yb, b_= ua+vb ã¨æ›¸ãã¨
+		# a=1a+0b, b=0a+1b ã‹ã‚‰å§‹ã‚ã¦...
 		x=1; y=0; u=0;v=1
 		while true
 			if b==0;return a,x,y;end
@@ -872,14 +873,14 @@ module Number
 
 
 
-	def gcd2(a,*b) # gcd2s ¤Î wrapper
+	def gcd2(a,*b) # gcd2s ã® wrapper
 		case a
 		when Array;
 		when Integer; a=[a]+b
 		else  raise TypeError
 		end
-		# a[] ¤Î gcd ¤È
-		# gcd=a[0]*xj[0]+a[1]*xj[1]+...+a[n]*xj[n] ¤È¤Ê¤ë·¸¿ô xj[] ¤òÊÖ¤¹.
+		# a[] ã® gcd ã¨
+		# gcd=a[0]*xj[0]+a[1]*xj[1]+...+a[n]*xj[n] ã¨ãªã‚‹ä¿‚æ•° xj[] ã‚’è¿”ã™.
 		g=0; xj=[]; # gcd up to i
 		a.each{|b|
 			g,x,y=gcd2s(b,g)
@@ -899,7 +900,7 @@ module Number
 			printf "%s %s\n",a,b,q
 		end
 	end
-	
+
 	def gcdC(a,*b) # wrapper of gcdSC
 		# complex GCD of Gauss integer
 		case a
@@ -913,9 +914,9 @@ module Number
 
 
 	def gcd2sC(a,b)
-		# a,b ¤ËÂÐ¤· gcd(a,b)= ax+by ¤È¤Ê¤ë x,y ¤ò gcd ¤È¤È¤â¤Ëµá¤á¤ë.
-		# a'= xa+yb, b'= ua+vb ¤È½ñ¤¯¤È
-		# a=1a+0b, b=0a+1b ¤«¤é»Ï¤á¤Æ...
+		# a,b ã«å¯¾ã— gcd(a,b)= ax+by ã¨ãªã‚‹ x,y ã‚’ gcd ã¨ã¨ã‚‚ã«æ±‚ã‚ã‚‹.
+		# a'= xa+yb, b'= ua+vb ã¨æ›¸ãã¨
+		# a=1a+0b, b=0a+1b ã‹ã‚‰å§‹ã‚ã¦...
 		x=Complex(1); y=Complex(0); u=Complex(0);v=Complex(1)
 		while true
 			if b==0;return a,x,y;end
@@ -924,17 +925,17 @@ module Number
 			q,b=divmodC(b,a); u=u-q*x; v=v-q*y
 		end
 	end
-	
-	
-	def gcd2C(a,*b) # gcd2sC ¤Î wrapper
+
+
+	def gcd2C(a,*b) # gcd2sC ã® wrapper
 		# complex GCD of Gauss integer
 		case a
 		when Array;
 		when Integer; a=[a]+b
 		else  raise TypeError
 		end
-		# a[] ¤Î gcd ¤È
-		# gcd=a[0]*xj[0]+a[1]*xj[1]+...+a[n]*xj[n] ¤È¤Ê¤ë·¸¿ô xj[] ¤òÊÖ¤¹.
+		# a[] ã® gcd ã¨
+		# gcd=a[0]*xj[0]+a[1]*xj[1]+...+a[n]*xj[n] ã¨ãªã‚‹ä¿‚æ•° xj[] ã‚’è¿”ã™.
 		g=Complex(0); xj=[]; # gcd up to i
 		a.each{|b|
 			g,x,y=gcd2sC(b,g)
@@ -943,7 +944,7 @@ module Number
 		}
 		return g,*xj
 	end
-	
+
 	def lcm(a,*b)
 		case a
 		when Array;
@@ -953,20 +954,20 @@ module Number
 		l=1; a.each{|x| l=l*(x.div(gcdS(l,x)))}
 		return l.abs
 	end
-	
-	
+
+
 	def factorial(n)
 		k=1; for i in 2..n; k *= i;end; return k
 	end
-	
+
 	def comb(m,n) # combination
 		return (factorial(m).div(factorial(n))).div(factorial(m-n))
 	end
-	
+
 	def perm(m,n) # permutation
 		return factorial(m).div(factorial(m-n))
 	end
-	
+
 	def digit_base(n,b)
 		# return digit of n in base b. i.e. return k such that b^(k-1) <= n < b^k.
 		if n<0 then n=-n; end;
@@ -988,24 +989,24 @@ module Number
 
 	def i_to_notation_factorial(i)
         # return array of coefficients of notation of factorial base
-        # i=c[n]n!+c[n-1](n-1)!+...+c[2]2!+c[1]1!, c[0]=0  (i>=0) 
+        # i=c[n]n!+c[n-1](n-1)!+...+c[2]2!+c[1]1!, c[0]=0  (i>=0)
  		i=i.abs
 		if i==0;return [1];end
 		c=[0];b=2
 		while i>0; c.push(i%b); i=i.div(b);b=b+1; end
 		return c
 	end
-	
+
 
 	def notation_array_to_i(c,b)
 		i=0; d=c.size-1
 		while d>=0; i=i*b+c[d];d=d-1; end
 		return i
 	end
-	
-	
+
+
 	def notation_factorial_to_i(c)
-		# notation_factorial(i) ¤ÎµÕ
+		# notation_factorial(i) ã®é€†
 		i=0; d=c.size-1
 		while d>=1; i=(i+c[d])*d;d=d-1; end
 		return i
@@ -1014,13 +1015,13 @@ module Number
 	NotationCharS="0123456789abcdefghijklmnopqrstuvwxyz"
 	NotationCharA=NotationCharS.split("")
 	NotationCharRH={}; NotationCharA.each_with_index{|c,i| NotationCharRH[c]=i}
-	
+
 	def notation_str_to_i(str,b)
 		c=[]
 		str.downcase.split("").reverse_each{|v| c.push(NotationCharRH[v])}
 		return notation_array_to_i(c,b)
 	end
-	
+
 	def i_to_notation_str(i,b)
 		str=""; i_to_notation_array(i,b).each{|v| str=NotationCharA[v]+str}
 		return str
