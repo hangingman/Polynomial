@@ -80,7 +80,8 @@ RSpec.describe Polynomial do
       end
     end
   end
-  describe "#countSolution (We can control support range and duplications. By default, range is real number and count duplication.)" do
+  describe "#countSolution" do
+    # We can control support range and duplications. By default, range is real number and count duplication.
     s = "(x-1)^3(x+2)^2"
     f=Poly(s)
     it "can count all solutions" do
