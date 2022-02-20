@@ -106,17 +106,3 @@ class PQueue
     for i in 1..@size do yield @qarray[i], i; end
   end
 end # class pqueue
-
-if $0 == __FILE__
-  pq = PQueue.new(proc { |x, y| x > y })
-  pq.push(2)
-  pq.push(3)
-  pq.push(4)
-  pq.push(3)
-  pq.push(2)
-  pq.push(4)
-  print pq.size.to_s + "\n"
-  print pq.to_a.to_s + "\n"
-  pq.each_with_index { |x, y| print x.to_s + "," + y.to_s + "\n" }
-  pq.each_pop { |x| print x.to_s + "\n" }
-end
