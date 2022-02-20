@@ -11,3 +11,7 @@ group :test do
   gem "rubocop", "~> 0.80"
   gem "rspec-parameterized-context"
 end
+
+group :development do
+  gem "ripper-tags"
+end
