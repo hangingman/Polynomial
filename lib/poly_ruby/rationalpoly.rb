@@ -333,7 +333,3 @@ class RationalPoly
     sprintf("RationalPoly(%s, %s)", @numerator.inspect, @denominator.inspect)
   end
 end # RationalPoly
-
-if $0 == __FILE__
-  # test code
-end

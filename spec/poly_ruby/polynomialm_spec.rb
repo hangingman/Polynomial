@@ -45,6 +45,12 @@ RSpec.describe PolynomialM do
     f7=f3.integral(["x","y"])
     printf 'f3.integral(["x","y"])=%s'+"\n",f7
   end
+
+  skip "" do
+    # test code
+    f = PolynomialM("x+y^2").substitute("x" => PolynomialM("y"), "y" => PolynomialM("x"))
+    print f, "\n"
+  end
 end
 
 

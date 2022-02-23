@@ -915,9 +915,3 @@ class PolynomialM # Polynomial of Multi Variable
     sprintf("PolynomialM(%s)", @monomials.join(","))
   end
 end #PolynomialM
-
-if $0 == __FILE__
-  # test code
-  f = PolynomialM("x+y^2").substitute("x" => PolynomialM("y"), "y" => PolynomialM("x"))
-  print f, "\n"
-end
