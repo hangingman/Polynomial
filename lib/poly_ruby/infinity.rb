@@ -42,13 +42,21 @@ class InfinityClass
 
   def InfinityClass.cnvInfinityClass(x)
     v = checkInfinity(x)
-    if v.kind_of?(InfinityClass); return v elsif defined?(Complex) && x.kind_of?(Complex)
-      if x.imag == 0; return InfinityClass(2 + (x.real <=> 0), x.real); else return InfinityClass(5, x); end
+    if v.kind_of?(InfinityClass)
+      return v
+    elsif defined?(Complex) && x.kind_of?(Complex)
+      if x.imag == 0
+        return InfinityClass(2 + (x.real <=> 0), x.real)
+      else
+        return InfinityClass(5, x)
+      end
     elsif x.kind_of?(Float) ||
           x.kind_of?(Integer) ||
           (defined?(Rational) && x.kind_of?(Rational))
       return InfinityClass(2 + (x <=> 0), x)
-    else return Indefinite;     end
+    else
+      return Indefinite
+    end
   end
 
   def eql?(o)
@@ -78,8 +86,8 @@ class InfinityClass
     if o.kind_of?(InfinityClass); j = o.type; elsif defined?(Complex) && o.kind_of?(Complex)
       if o.image == 0; return self.readTbl2(o.real, tbl); else j = 5; end
     elsif o.kind_of?(Float)
-      o = checkInfiniteClass(o)
-      if o.kind_of?(InfiniteClass); j = o.type else j = (o <=> 0) + 2; end
+      o = checkInfinity(o)
+      if o.kind_of?(InfinityClass); j = o.type else j = (o <=> 0) + 2; end
     elsif o.kind_of?(Integer) || (defined?(Rational) && o.kind_of?(Rational))
       j = (o <=> 0) + 2
     else return Indef     end
@@ -240,8 +248,16 @@ Infinity = InfinityClass::Inf # +infinity
 InfinityU = InfinityClass::Infu # complex or unsigned infinity
 Indefinite = InfinityClass::Indef # indefinite
 
-def checkInifnity(x)
-  if x.kind_of(Float) && x.to_s == "Infinity"; return Infinity; elsif x.kind_of(Float) && x.to_s == "-Infinity"; return -Infinity; elsif x.kind_of(Float) && x.to_s == "NaN"; return Indefinite; else return x end
+def checkInfinity(x)
+  if x.kind_of?(Float) && x.to_s == "Infinity"
+    return Infinity
+  elsif x.kind_of?(Float) && x.to_s == "-Infinity"
+    return -Infinity
+  elsif x.kind_of?(Float) && x.to_s == "NaN"
+    return Indefinite
+  else
+    return x
+  end
 end
 
 if $0 == __FILE__
