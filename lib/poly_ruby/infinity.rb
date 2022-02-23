@@ -259,17 +259,3 @@ def checkInfinity(x)
     return x
   end
 end
-
-if $0 == __FILE__
-  # test code
-  #print Inf_IEEE754==1.0/0.0," x \n"
-  #print Inf_IEEE754<=>1,"\n"
-  #print NaN_IEEE754===0.0/0.0,"\n"
-  #print 0.0/0.0===0.0/0.0,"\n"
-  #print Inf_IEEE754<=>1,"\n"
-  #print NaN_IEEE754<=>1,"\n"
-  #
-  #print Indefinite<=>Indefinite,"\n"
-  #print Infinity<Infinity,"\n"
-  #print 3.between?(-Infinity,Infinity),"\n"
-end

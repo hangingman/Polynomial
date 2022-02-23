@@ -55,7 +55,7 @@ def HyperReal(r)
 end
 
 class HyperReal < Numeric
-  require "rationalpoly"
+  require "poly_ruby/rationalpoly"
 
   F_to_IR = [true]
 

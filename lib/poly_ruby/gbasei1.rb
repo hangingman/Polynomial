@@ -106,21 +106,4 @@ module GBaseI1
   module_function :makeGBase, :makeStrongGB, :makeMinimalStrongGB
   module_function :getGBaseI1
 end # GBaseI1
-
-def testGBaseI1
-  print "--- Grobner basis in Z[x]---\n"
-  f1 = Polynomial("2x^(4)-2x^(2)+8x+10")
-  f2 = Polynomial("3x^(4)+12x+15")
-  f3 = Polynomial("2x^(5)+12x^(4)-2x^(3)+10x^(2)+58x+62")
-  flist = [f1, f2, f3]
-  print "basis\n"
-  flist.each { |f| printf "%s\n", f }
-  flist2 = GBaseI1.getGBaseI1(flist)
-  print "Groebner basis\n"
-  flist2.each { |f| printf "%s\n", f }
-end
-
-if $0 == __FILE__
-  testGBaseI1
-end
 # end of script

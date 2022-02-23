@@ -57,7 +57,7 @@
 
 class Float
   require "rational"
-  require "hyperreal"
+  require "poly_ruby/hyperreal"
 
   def to_ir #return Integer or Rational. If Inf or NaN,return HyperReal.
     f = HyperReal.Inf_to_HyperInf(self) # Check if Inf or NaN.
@@ -83,7 +83,7 @@ class Float
 end # Float
 
 class Rational
-  require "hyperreal"
+  require "poly_ruby/hyperreal"
 
   FloatDomainMax = 2 ** (2 ** 10)
   AccuracyMax = 2 ** (2 ** 10)
@@ -132,10 +132,10 @@ class Rational
 end # Rational
 
 module MathExt
-  require "number"
   require "rational"
-  require "polynomial"
-  require "rationalpoly"
+  require "poly_ruby/number"
+  require "poly_ruby/polynomial"
+  require "poly_ruby/rationalpoly"
 
   # LOCAL CONSTANT:
 
@@ -465,48 +465,3 @@ module MathExt
   module_function :gamma, :lgamma, :beta
   module_function :hypot
 end # MathHyper
-
-if $0 == __FILE__
-  x = Math::PI / 4
-  s0 = Math.sin(x); s1 = MathExt.sin(x)
-  printf "sin(%s)= %s %s diff:%s\n", x, s0, s1, s0 - s1
-  s0 = Math.cos(x); s1 = MathExt.cos(x)
-  printf "cos(%s)= %s %s diff:%s\n", x, s0, s1, s0 - s1
-  s0 = Math.tan(x); s1 = MathExt.tan(x)
-  printf "tan(%s)= %s %s diff:%s\n", x, s0, s1, s0 - s1
-  s0 = Math.atan(x); s1 = MathExt.atan(x)
-  printf "atan(%s)= %s %s diff:%s\n", x, s0, s1, s0 - s1
-  s0 = Math.log(x); s1 = MathExt.log(x)
-  printf "log(%s)= %s %s diff:%s\n", x, s0, s1, s0 - s1
-  s0 = Math.exp(x); s1 = MathExt.exp(x)
-  printf "exp(%s)= %s %s diff:%s\n", x, s0, s1, s0 - s1
-  s0 = Math.sqrt(x); s1 = MathExt.sqrt(x)
-  printf "sqrt(%s)= %s %s diff:%s\n", x, s0, s1, s0 - s1
-  #
-  x = 2.0
-  s0 = Math.sqrt(x); s1 = MathExt.sqrt(x)
-  printf "sqrt(%s)= %s %s %s\n", x, s0, s1, s0 - s1
-  t0 = s0 * s0; t1 = s1 * s1
-  printf "(sqrt(%s))^2= %s %s , diff:%s %s\n", x, t0, t1, x - t0, x - t1
-  #
-  x = 1.0
-  s0 = Math.atan(x); s1 = MathExt.atan(x)
-  printf "atan(%s)= %s %s diff:%s\n", x, s0, s1, s0 - s1
-  t0 = Math.tan(s0); t1 = MathExt.tan(s1)
-  printf "tan(atan(%s))= %s %s , diff:%s %s\n", x, t0, t1, x - t0, x - t1
-  #
-  x = 1.4
-  s0 = Math.log(x); s1 = MathExt.log(x)
-  printf "log(%s)= %s %s diff:%s\n", x, s0, s1, s0 - s1
-  t0 = Math.exp(s0); t1 = MathExt.exp(s1)
-  printf "exp(log(%s))= %s %s , diff:%s %s\n", x, t0, t1, x - t0, x - t1
-  #
-  printf "%1.20f\n", Math::PI
-  printf "%1.20f\n", MathExt::PI
-  #
-  x = 2; printf "gamma(%s)=%s\n", x, MathExt.gamma(x)
-  x = 3; printf "gamma(%s)=%s\n", x, MathExt.gamma(x)
-  x = 4; printf "gamma(%s)=%s\n", x, MathExt.gamma(x)
-  x = 0.5; printf "gamma(%s)=%s\n", x, MathExt.gamma(x)
-  printf " sqrt(PI) =%s\n", MathExt.sqrt(Math::PI)
-end
