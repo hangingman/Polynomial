@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.summary       = "Classes about polynomial, rational polynomial, hyper real(non-standard analyses)."
   spec.description   = "Classes about polynomial, rational polynomial, hyper real(non-standard analyses). http://www.math.kobe-u.ac.jp/HOME/kodama/tips-RubyPoly.html"
   spec.homepage      = "https://github.com/hangingman/Polynomial"
-  spec.required_ruby_version = Gem::Requirement.new(">= 2.3.0")
+  spec.required_ruby_version = Gem::Requirement.new(">= 2.7.0")
 
   #spec.metadata["allowed_push_host"] = "TODO: Set to 'http://mygemserver.com'"
   spec.metadata["homepage_uri"] = spec.homepage
