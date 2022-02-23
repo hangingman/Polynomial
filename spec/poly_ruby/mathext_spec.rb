@@ -61,7 +61,8 @@ RSpec.describe MathExt do
         expect(s1).to eq 1.414213562373095
         expect(s0-s1).to eq 2.220446049250313e-16
       end
-      it "(sqrt(x))^2= 2.0000000000000004(Math) 1.9999999999999996(MathExt) diff:-4.440892098500626e-16 4.440892098500626e-16" do
+      it "(sqrt(x))^2= 2.0000000000000004(Math) 1.9999999999999996(MathExt) \
+      diff:-4.440892098500626e-16 4.440892098500626e-16" do
         s0 = Math.sqrt(x); s1 = MathExt.sqrt(x)
         t0 = s0 * s0; t1 = s1 * s1
         expect(t0).to eq 2.0000000000000004

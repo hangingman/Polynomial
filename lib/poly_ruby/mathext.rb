@@ -437,7 +437,16 @@ module MathExt
   def lgamma(a)
     if a.kind_of?(Numeric)
       if a.kind_of?(Integer); x = a.to_f
-        if a <= 0; return Number.NaN_IEEE754; else return log(Number.factorial(a)); end       elsif a.kind_of?(Rational); x = a.to_f; else x = a;       end
+        if a <= 0
+          return Number.NaN_IEEE754
+        else
+          return log(Number.factorial(a))
+        end
+      elsif a.kind_of?(Rational)
+        x = a.to_f
+      else
+        x = a
+      end
       l = 10
       f1 = 0.0; while x < l; f1 = f1 + log(x); x = x + 1; end
       f2 = 0.0;  # while x>(l+1); x=x-1; f2=f2+log(x);end

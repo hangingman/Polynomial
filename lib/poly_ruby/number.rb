@@ -317,8 +317,48 @@ module Number
   end
 
   def prime?(x)
-    if x & 1 == 0; if x == 2; return true; else return false; end elsif x % 3 == 0; if x == 3; return true; else return false; end elsif x % 5 == 0; if x == 5; return true; else return false; end elsif x % 7 == 0; if x == 7; return true; else return false; end elsif x % 11 == 0; if x == 11; return true; else return false; end elsif x % 13 == 0; if x == 13; return true; else return false; end elsif x < 2; return false end
-    if (x > 1000000000) && (not fpsp?(x, 13)); return false; end
+    if x & 1 == 0
+      if x == 2
+        return true
+      else
+        return false
+      end
+    elsif x % 3 == 0
+      if x == 3
+        return true
+      else
+        return false
+      end
+    elsif x % 5 == 0
+      if x == 5
+        return true
+      else
+        return false
+      end
+    elsif x % 7 == 0
+      if x == 7
+        return true
+      else
+        return false
+      end
+    elsif x % 11 == 0
+      if x == 11
+        return true
+      else
+        return false
+      end
+    elsif x % 13 == 0
+      if x == 13
+        return true
+      else
+        return false
+      end
+    elsif x < 2
+      return false
+    end
+    if (x > 1000000000) && (not fpsp?(x, 13))
+      return false
+    end
     d = sqrti(x)
     #r1=5; r2=7  # \pm 1 (mod 6)
     #r1=11; r2=13
@@ -609,8 +649,16 @@ module Number
 
   def w4(d)
     # w(D): number of roots of unity in the quadratic order of discriminant D
-    if d < -4; return 2; elsif d == -4; return 4; elsif d == -3; return 6; else printf "w(%d): Note that D==0,1 mod 4, D<0.\n", d;  #
-      raise "error in w(d)" end
+    if d < -4
+      return 2
+    elsif d == -4
+      return 4
+    elsif d == -3
+      return 6
+    else
+      printf "w(%d): Note that D==0,1 mod 4, D<0.\n", d
+      raise "error in w(d)"
+    end
   end
 
   def lj0(ni, a, b)

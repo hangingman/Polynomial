@@ -221,7 +221,13 @@ class InfinityClass
   def **(o)
     r = self.readTbl2(o, PowTbl)
     if r == T
-      if @val == 1; return Indef; elsif @val == -1; return Indef; elsif @val.abs < 1; return 0; elsif defined?(Complex) && @val.kind_of?(Complex) # complex self.abs>1
+      if @val == 1
+        return Indef
+      elsif @val == -1
+        return Indef
+      elsif @val.abs < 1
+        return 0
+      elsif defined?(Complex) && @val.kind_of?(Complex) # complex self.abs>1
         return Infu
       elsif @val > 1
         case o.type

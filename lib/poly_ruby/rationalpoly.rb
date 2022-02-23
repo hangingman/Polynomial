@@ -302,7 +302,13 @@ class RationalPoly
 
   def substitute(x)
     n = @numerator.substitute(x); d = @denominator.substitute(x)
-    if n.kind_of?(Polynomial) || d.kind_of?(Polynomial); r = RationalPoly(n, d) elsif n.kind_of?(Integer) && d.kind_of?(Integer); r = Rational(n, d) else; r = n / d end
+    if n.kind_of?(Polynomial) || d.kind_of?(Polynomial)
+      r = RationalPoly(n, d)
+    elsif n.kind_of?(Integer) && d.kind_of?(Integer)
+      r = Rational(n, d)
+    else
+      r = n / d
+    end
     return r
   end
 

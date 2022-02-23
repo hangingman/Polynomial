@@ -48,10 +48,28 @@
 #        If true then convert Float to Rational in function HperReal()
 
 def HyperReal(r)
-  if r.kind_of?(HyperReal); return r.clone elsif r.kind_of?(RationalPoly); return HyperReal.new(r) elsif r.kind_of?(Integer); return HyperReal.new(RationalPoly(r)) elsif r.kind_of?(Rational); return HyperReal.new(RationalPoly(r)) elsif r.kind_of?(Float)
-    if HyperReal::F_to_IR[0]; ir = RationalPoly(r.to_ir) else ir = HyperReal.Inf_to_HyperInf(r) end
-    if ir.kind_of?(HyperReal); return ir else return HyperReal.new(RationalPoly(ir)) end
-  else raise TyoeError;   end
+  if r.kind_of?(HyperReal)
+    return r.clone
+  elsif r.kind_of?(RationalPoly)
+    return HyperReal.new(r)
+  elsif r.kind_of?(Integer)
+    return HyperReal.new(RationalPoly(r))
+  elsif r.kind_of?(Rational)
+    return HyperReal.new(RationalPoly(r))
+  elsif r.kind_of?(Float)
+    if HyperReal::F_to_IR[0]
+      ir = RationalPoly(r.to_ir)
+    else
+      ir = HyperReal.Inf_to_HyperInf(r)
+    end
+    if ir.kind_of?(HyperReal)
+      return ir
+    else
+      return HyperReal.new(RationalPoly(ir))
+    end
+  else
+    raise TyoeError
+  end
 end
 
 class HyperReal < Numeric
@@ -80,7 +98,15 @@ class HyperReal < Numeric
     # If f is Float::Inf(-Inf, NaN resp.),
     # then return HyperReal::Infinity(-Infinity, Indefinite resp.)
     # else return f itself.
-    if f.kind_of?(Float) && f.to_s == "Infinity"; return Infinity; elsif f.kind_of?(Float) && f.to_s == "-Infinity"; return -Infinity; elsif f.kind_of?(Float) && f.to_s == "NaN"; return Indefinite; else return f end
+    if f.kind_of?(Float) && f.to_s == "Infinity"
+      return Infinity
+    elsif f.kind_of?(Float) && f.to_s == "-Infinity"
+      return -Infinity
+    elsif f.kind_of?(Float) && f.to_s == "NaN"
+      return Indefinite
+    else
+      return f
+    end
   end
 
   def reduce

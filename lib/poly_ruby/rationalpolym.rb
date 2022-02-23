@@ -259,11 +259,20 @@ class RationalPolyM
   end
 
   def substitute(list)
-    n = @numerator.substitute(list); d = @denominator.substitute(list)
+    n = @numerator.substitute(list)
+    d = @denominator.substitute(list)
     if n.kinf_of?(RationalPolyM) || d.kind_of?(RationalPolyM) ||
        n.kinf_of?(RationalPoly) || d.kind_of?(RationalPoly)
       r = n / d
-    elsif n.kinf_of?(PolynomialM) || d.kind_of?(PolynomialM); r = RationalPolyM(n, d) elsif n.kinf_of?(Polynomial) || d.kind_of?(Polynomial); r = RationalPoly(n, d) elsif n.kind_of?(Intger) && d.kind_of?(Integer); r = Rational(n, d) else; r = n / d     end
+    elsif n.kinf_of?(PolynomialM) || d.kind_of?(PolynomialM)
+      r = RationalPolyM(n, d)
+    elsif n.kinf_of?(Polynomial) || d.kind_of?(Polynomial)
+      r = RationalPoly(n, d)
+    elsif n.kind_of?(Intger) && d.kind_of?(Integer)
+      r = Rational(n, d)
+    else
+      r = n / d
+    end
     return r
   end
 
