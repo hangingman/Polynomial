@@ -156,7 +156,7 @@ GNU General Public License(GPL).
        var is name of variable
        order: true=heigher term to lower, false=reversed
        format: "text" then "5x^4+3x^2+1"
-				"tex"       "5x^{4}+3x^{2}+1"
+               "tex"       "5x^{4}+3x^{2}+1"
                "texm"      "$5x^{4}+3x^{2}+1$"
                "prog"      "5*x**4+3*x**2+1"
    Polynomial.factor2s(factor,sep=" ")

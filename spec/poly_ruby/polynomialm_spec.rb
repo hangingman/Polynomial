@@ -47,7 +47,6 @@ RSpec.describe PolynomialM do
   end
 
   skip "" do
-    # test code
     f = PolynomialM("x+y^2").substitute("x" => PolynomialM("y"), "y" => PolynomialM("x"))
     print f, "\n"
   end
@@ -76,12 +75,12 @@ RSpec.describe GBase do
     printf "Groebner base: %s\n", gbasis.join(", ")
 
     print "-- with deglex term order\n"
-    # Monomial.setTermOrder(t)
+    # Monomial.set_term_order(t)
     #	 t= "lex"(default), "deglex",  "degrevlex"
-    Monomial.setTermOrder("deglex")
+    Monomial.set_term_order("deglex")
     gbasis=GBase.getGBase([f1,f2])
     printf "Groebner basis: %s\n", gbasis.join(", ")
-    Monomial.setTermOrder
+    Monomial.set_term_order
 
     print "---- sample 3 ---\n"
     print "-- Grobnae basis in Z/5Z coefficients. \n"
@@ -94,7 +93,7 @@ RSpec.describe GBase do
     print "--- sample 4 ---\n"
     print "-- Grobner basis in Z coefficnents. \n"
     Monomial.setVarOrder
-    Monomial.setTermOrder("lex")
+    Monomial.set_term_order("lex")
     f1=PolynomialM("6x^2+y^2")
     f2=PolynomialM("10x^2y+2x*y")
     printf "%s, %s\n",f1,f2
