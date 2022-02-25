@@ -28,12 +28,12 @@
 #               "texm"      "$5x^{4}+3x^{2}+1$"
 #               "prog"      "5*x**4+3*x**2+1"
 # Monomial.set_term_order(t)
-# Monomial.getTermOrder
+# Monomial.get_term_order
 #        t= "lex"(default), "deglex",  "degrevlex"
 #        set/get term order
-# Monomial.setVarOrder(order)
-# Monomial.getVarOrder
-# Monomial.appendVarName(v) # Assume that v be String
+# Monomial.set_var_order(order)
+# Monomial.get_var_order
+# Monomial.append_var_name(v) # Assume that v be String
 #     set/get/append var. order
 #     default VarOrder is:
 #     ["x","y","z","u","v","w","p","q","r","s","t",
@@ -48,13 +48,13 @@
 # divisible?(other)
 # /(monomial)
 #       divide.  Assume self.divisible?(other)
-# divmodI(m)
+# divmod_i(m)
 #       divide.  Assume self.divisible?(other)
 #       return quotient, residue
 #       quotient has Integer coefficient, residue>=0
-# divZp(m,p)
+# div_zp(m,p)
 #       divide.  Assume self.divisible?(other)
-# totalDegree
+# total_degree
 # <=>
 #       1: self>m, 0: self=m, -1: self<m
 # lex(m),revlex(m),deglex(m),degrevlex(m)
@@ -63,7 +63,7 @@
 #####################################
 
 def Monomial(c = 0, p = {}) # coefficient and power product
-  p.each_key { |v| Monomial.appendVarName(v) }
+  p.each_key { |v| Monomial.append_var_name(v) }
   return Monomial.new(c, p)
 end
 
@@ -214,7 +214,7 @@ class Monomial
     return true
   end
 
-  def divmodI(m)
+  def divmod_i(m)
     if m.kind_of?(Monomial) # && self.divisible?(m);
       q = Number.divFloor(@coeff, m.coeff)
       r = @coeff - q * m.coeff # Note that r>=0
@@ -232,7 +232,7 @@ class Monomial
     end
   end
 
-  def divZp(m, prime)
+  def div_zp(m, prime)
     if m.kind_of?(Monomial) # && self.divisible?(m);
       q = Number.modP(@coeff * Number.inv(m.coeff, prime), prime)
       p = @power.clone
@@ -257,7 +257,7 @@ class Monomial
 
   ### degree & order ###
 
-  def totalDegree
+  def total_degree
     deg = 0
     @power.each_value { |d| deg = deg + d }
     return deg
@@ -275,7 +275,7 @@ class Monomial
     TermOrder[0] = t
   end
 
-  def Monomial.getTermOrder
+  def Monomial.get_term_order
     return TermOrder[0]
   end
 
@@ -283,15 +283,15 @@ class Monomial
               ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"]
   VarOrder = VarOrder0.dup
 
-  def Monomial.setVarOrder(order = VarOrder0)
+  def Monomial.set_var_order(order = VarOrder0)
     VarOrder.replace(order)
   end
 
-  def Monomial.getVarOrder
+  def Monomial.get_var_order
     return VarOrder.dup
   end
 
-  def Monomial.appendVarName(v) # Assume that v be String
+  def Monomial.append_var_name(v) # Assume that v be String
     if !VarOrder.include?(v); VarOrder.push(v); end
   end
 
@@ -316,13 +316,13 @@ class Monomial
   end
 
   def deglex(m)
-    t1 = self.totalDegree; t2 = m.totalDegree
+    t1 = self.total_degree; t2 = m.total_degree
     if t1 != t2; return t1 <=> t2; end
     return self.lex(m)
   end
 
   def degrevlex(m)
-    t1 = self.totalDegree; t2 = m.totalDegree
+    t1 = self.total_degree; t2 = m.total_degree
     if t1 != t2; return t1 <=> t2; end
     return self.revlex(m)
   end

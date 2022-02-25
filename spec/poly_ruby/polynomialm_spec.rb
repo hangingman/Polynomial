@@ -92,7 +92,7 @@ RSpec.describe GBase do
 
     print "--- sample 4 ---\n"
     print "-- Grobner basis in Z coefficnents. \n"
-    Monomial.setVarOrder
+    Monomial.set_var_order
     Monomial.set_term_order("lex")
     f1=PolynomialM("6x^2+y^2")
     f2=PolynomialM("10x^2y+2x*y")

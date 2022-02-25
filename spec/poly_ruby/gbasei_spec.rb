@@ -31,7 +31,7 @@ RSpec.describe GBaseI do
     print gb.join(", "), "\n"
 
     print "--- sample ex.4.5.5a ---\n"
-    Monomial.setVarOrder(["y", "x"])
+    Monomial.set_var_order(["y", "x"])
     Monomial.set_term_order("lex")
     f1 = PolynomialM("2x*y-x")
     f2 = PolynomialM("3y-x^2")
@@ -39,7 +39,7 @@ RSpec.describe GBaseI do
     print gb.join(", "), "\n"
 
     print "--- sample ex.4.5.5b ---\n"
-    Monomial.setVarOrder
+    Monomial.set_var_order
     Monomial.set_term_order("deglex")
     f1 = PolynomialM("3x^2y-3y*z+y")
     f2 = PolynomialM("5x^2z-8z^2")
@@ -47,7 +47,7 @@ RSpec.describe GBaseI do
     print gb.join(", "), "\n"
 
     print "--- sample ex.4.5.5c ---\n"
-    Monomial.setVarOrder
+    Monomial.set_var_order
     Monomial.set_term_order("lex")
     f1 = PolynomialM("6x^2+y^2")
     f2 = PolynomialM("10x^2y+2x*y")

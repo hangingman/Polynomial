@@ -24,7 +24,7 @@
 #      residue r is Polynomial
 # divmodZp(divisors)
 #      divide in Zp
-# divmodI(divisors)
+# divmod_i(divisors)
 #      divide in Z
 #      quotient は Integer係数で得ます.
 #      係数の丸めは leading term の剰余が非負になる方向に行います.
@@ -209,7 +209,7 @@ class PolynomialM # Polynomial of Multi Variable
   end
 
   def unit?
-    if 0 < self.lp.totalDegree; return false; end
+    if 0 < self.lp.total_degree; return false; end
     lc = self.lc
     return (lc.abs == 1) || (lc.kind_of?(Rational)) || (lc.kind_of?(Float))
   end
@@ -229,7 +229,7 @@ class PolynomialM # Polynomial of Multi Variable
         if !vs.include(v); vs.push(v); end
       }
     }
-    vorder = Monomial.getVarOrder
+    vorder = Monomial.get_var_order
     vs.sort! { |v1, v2| vorder.index(v1) <=> vorder.index(v2) }
     return vs
   end
@@ -435,7 +435,7 @@ class PolynomialM # Polynomial of Multi Variable
         i = 0
         while i < ltD.size
           if ltH.divisible?(ltD[i])
-            qt = ltH.divZp(ltD[i], p)
+            qt = ltH.div_zp(ltD[i], p)
             q[i].monomials.push(qt)
             pw.monomials.replace([qt])
             h = h - (pw * divisors[i])
@@ -456,7 +456,7 @@ class PolynomialM # Polynomial of Multi Variable
     end
   end
 
-  def divmodI(divisors) # return q[],r
+  def divmod_i(divisors) # return q[],r
     if divisors.kind_of?(Array) && divisors[0].kind_of?(PolynomialM)
       # Multiple division.
       # "divisors" and quotient "q" are Array of PolynomialM
@@ -471,7 +471,7 @@ class PolynomialM # Polynomial of Multi Variable
         i = 0
         while i < ltD.size
           if ltH.divisibleI?(ltD[i])
-            qt, rt = ltH.divmodI(ltD[i])
+            qt, rt = ltH.divmod_i(ltD[i])
             q[i].monomials.push(qt)
             pw.monomials.replace([qt])
             h = h - (pw * divisors[i])
@@ -486,9 +486,9 @@ class PolynomialM # Polynomial of Multi Variable
       end
       return q, r
     elsif divisors.kind_of?(Numeric)
-      return self.divmodI([PolynomialM(divisors)])
+      return self.divmod_i([PolynomialM(divisors)])
     else
-      return self.divmodI([PolynomialM(divisors)])
+      return self.divmod_i([PolynomialM(divisors)])
     end
   end
 
