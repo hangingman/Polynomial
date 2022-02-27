@@ -5,45 +5,77 @@ require "poly_ruby/gbasei" # Z coefficient Grobner basis
 
 RSpec.describe PolynomialM do
 
-  skip "skip" do
-    print "-- string to polynomial\n"
-    s1="3x^2/2+5.to_r/2*x+7/2"
-    f1=PolynomialM(s1)
-    printf "%s ==> %s\n",s1,f1
-    s1="3x^2/2+5/2*x+7/2"
-    f1=PolynomialM(s1)
-    printf "%s ==> %s\n",s1,f1
+  it "can convert string to m-polynomial" do
+    expect(PolynomialM("3x^2/2+5/2*x+7/2").to_s).to eq "3x^(2)/2+5x/2+7/2"
+    expect(PolynomialM("x^2+3x*y+y^3").to_s).to eq "x^(2)+3x*y+y^(3)"
+    expect(PolynomialM("(y-1)^3").to_s).to eq "y^(3)-3y^(2)+3y-1"
+    expect(PolynomialM("x+y^2").to_s).to eq "x+y^(2)"
+  end
 
+  it "can do arithmetic operations for m-polynomial" do
     f1=PolynomialM("x^2+3x*y+y^3")
     f2=PolynomialM("(y-1)^3")
     f3=PolynomialM("x+y^2")
-    printf "f1=%s, f2=%s,f3=%s\n",f1,f2,f3
-
     f4=f1+f2-2*f3*f1+f3**2
-    printf "f1+f2-f3*f1+f3**2 = %s\n",f4
+    expect(f4.to_s).to eq "-2y^(5)-2x^(2)*y^(2)-8x*y^(3)+y^(4)-2x^(3)-6x^(2)*y+2x*y^(2)+2y^(3)+2x^(2)+3x*y-3y^(2)+3y-1"
+  end
 
-    print "-- divmod supprots multi division.\n"
-    print "-- It returns a pair [quotients,residue].\n"
-    print "-- In the following sample, We get multi division f4 by f2,f3.\n"
-    q,r=f4.divmod([f1,f2])
-    printf "f4= f1*(%s) + f2*(%s) + (%s)\n", q[0],q[1],r
+  describe "#divmod" do
+    f1=PolynomialM("x^2+3x*y+y^3")
+    f2=PolynomialM("(y-1)^3")
+    f3=PolynomialM("x+y^2")
+    f4=f1+f2-2*f3*f1+f3**2
+    it "can calc div and modulo" do
+      # divmod supprots multi division.
+      # It returns a pair [quotients,residue].
+      # In the following sample, We get multi division f4 by f2,f3.
+      q,r=f4.divmod([f1,f2])
+      expect(q[0].to_s).to eq "-2y^(2)-2x+y+2"
+      expect(q[1].to_s).to eq "0"
+      expect(r.to_s).to eq "-x^(2)*y-x*y^(2)-3x*y-3y^(2)+3y-1"
+    end
+  end
 
-    print "-- substitute\n"
-    f5=f3.substitute("x"=>2,"y"=> 1)
-    printf "substitute: %s(2,1) = %s\n",f3,f5
+  describe "#substitute" do
+    it "f(x,y) = x+y^(2); f(2,1) = 3" do
+      f3=PolynomialM("x+y^2")
+      f5=f3.substitute("x"=>2,"y"=> 1)
+      expect(f5.to_s).to eq "3"
+    end
 
-    print "-- We can use substitute method to polynomials.\n"
-    print "-- In the following sample, We exchange x and y each other.\n"
-    f5=f3.substitute("x"=>PolynomialM("y"),"y"=>PolynomialM("x"))
-    printf "substitute: %s(y,x) = %s\n",f3,f5
+    # We can use substitute method to polynomials.
+    # In the following sample, We exchange x and y each other.
+    it "f(x,y) = x+y^(2); f(y,x) = x^2+y" do
+      f3=PolynomialM("x+y^2")
+      f5=f3.substitute("x"=>PolynomialM("y"),"y"=>PolynomialM("x"))
+      expect(f5.to_s).to eq "x^(2)+y"
+    end
+  end
 
-    print "-- derivative\n"
-    f6=f2.derivative(["x","x","y"])
-    printf 'f2.derivative(["x","x","y"])=%s'+"\n",f6
-
-    print "-- integral\n"
-    f7=f3.integral(["x","y"])
-    printf 'f3.integral(["x","y"])=%s'+"\n",f7
+  describe "#derivative" do
+    it "f(x) = (x+2)(x+3); d/dx f(x) = 2x+5" do
+      f1=PolynomialM("(x+2)(x+3)")
+      f2=f1.derivative(["x"])
+      expect(f2.to_s).to eq "2x+5"
+    end
+    it "f(x) = (2x-3)^4; d/dx f(x) = 8(2x-3)^3" do
+      f1=PolynomialM("(2x-3)^4")
+      f2=f1.derivative(["x"])
+      #expect(f2.to_s).to eq ""
+      #expect(f2.to_s).to eq PolynomialM("8*(2*x-3)**3").to_s
+    end
+    it "" do
+      #print "-- derivative\n"
+      #f2=PolynomialM("(y-1)^3")
+      #f6=f2.derivative(["x","x","y"])
+      #printf 'f2.derivative(["x","x","y"])=%s'+"\n",f6
+    end
+  end
+  it "" do
+    #
+    # print "-- integral\n"
+    # f7=f3.integral(["x","y"])
+    # printf 'f3.integral(["x","y"])=%s'+"\n",f7
   end
 
   skip "" do

@@ -83,6 +83,15 @@ class Monomial
     m = Monomial.new(@coeff, @power.clone); return m
   end
 
+  def ==(other)
+    case other
+    when Monomial
+      return self.coeff == other.coeff && self.power == other.power
+    else
+      raise TypeError
+    end
+  end
+
   def normalize!
     @power.each { |v, p| if 0 == p; @power.delete(v); end }
   end
@@ -131,7 +140,9 @@ class Monomial
     m = Monomial.new(1, {})
     VarOrder.each { |v|
       d = [@power[v], other.power[v]].max
-      if m != 0; m.power[v] = d; end
+      #if m != nil
+      m.power[v] = d
+      #end
     }
     return m
   end
@@ -140,7 +151,9 @@ class Monomial
     m = Monomial.new(1, {})
     VarOrder.each { |v|
       d = [@power[v], other.power[v]].min
-      if m != 0; m.power[v] = d; end
+      #if m != 0
+      m.power[v] = d
+      #end
     }
     return m
   end
@@ -170,6 +183,33 @@ class Monomial
   # Assume that power is the same.
   def -(m)
     return self + (-m)
+  end
+
+  def **(n)
+    if n.kind_of?(Integer)
+      s = Monomial.new(1, {})
+      p = self.clone
+      p.normalize!
+      while n > 0
+        if n & 1 == 1
+          s = s * p
+        end
+        p = p * p
+        n >>= 1
+      end
+      return s
+    else
+      raise TypeError
+    end
+
+    # if n==1
+    #   return self
+    # end
+    #
+    # c = @coeff ** n
+    # p = @power.clone
+    # p = p.map{|k, v| [k, v*n] }.to_h
+    # return Monomial.new(c, p)
   end
 
   def *(m)

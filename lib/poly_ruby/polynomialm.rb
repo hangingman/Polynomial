@@ -96,6 +96,7 @@
 
 require "poly_ruby/number"
 require "poly_ruby/polynomial"
+require "poly_ruby/poly_m_parser"
 require "poly_ruby/monomial"
 
 # Example.
@@ -109,7 +110,8 @@ end
 
 def PolynomialM(poly_arg1 = 0, *poly_arg2)
   case poly_arg1
-  when PolynomialM; return poly_arg1
+  when PolynomialM
+    return poly_arg1
   when Numeric
     if poly_arg2[0].kind_of?(Hash)
       #coefficient and power product like Monomial
@@ -119,15 +121,11 @@ def PolynomialM(poly_arg1 = 0, *poly_arg2)
     # generate var-names as variables in Ruby
     # and eval the expression
     poly_str = PolyWork.cnv_prog_format(poly_arg1)
-    for var_name in poly_str.scan(/[a-z][a-zA-Z0-9_]*/)
-      eval var_name + "=PolynomialM.new([Monomial(1,{var_name=>1})])"
-    end
-    # for Rational expression
-    poly_str = poly_str.gsub(/\//, "*poly_one/")
-    poly_one = PolynomialM.new([Monomial(1, {})])
-    reply = eval poly_str
-    return PolynomialM(reply)
-  when Polynomial; return PolynomialM(poly_arg1.to_s("prog"))
+    # puts "*** debug ***"
+    # p poly_str
+    return PolynomialMParser.new.parse(poly_str)
+  when Polynomial
+    return PolynomialM(poly_arg1.to_s("prog"))
   when Monomial # sequence of Monomial
     return PolynomialM.new([poly_arg1] + poly_arg2)
   when Array
@@ -136,10 +134,10 @@ def PolynomialM(poly_arg1 = 0, *poly_arg2)
     else # A generating function. May be.
       return PolynomialM(Polynomial(poly_arg1))
     end
-  else; raise TypeError   end
+  else
+    raise TypeError
+  end
 end
-
-alias PolyM PolynomialM
 
 class PolynomialM # Polynomial of Multi Variable
   def initialize(monomials = []) # Polynomial is sequence of Monomials.
@@ -359,13 +357,19 @@ class PolynomialM # Polynomial of Multi Variable
     if n.kind_of?(Integer)
       # calculate ** following to binary notation of "power".
       s = PolynomialM.new([Monomial.new(1, {})])
-      p = self.clone; p.normalize!
+      p = self.clone
+      p.normalize!
       while n > 0
-        if n & 1 == 1; s = s * p; end
-        p = p * p; n >>= 1
+        if n & 1 == 1
+          s = s * p
+        end
+        p = p * p
+        n >>= 1
       end
       return s
-    else raise TypeError     end
+    else
+      raise TypeError
+    end
   end
 
   def divmod(divisors) # return q[],r
@@ -512,8 +516,15 @@ class PolynomialM # Polynomial of Multi Variable
         if m.power.has_key?(var)
           p = m.power[var]
           m.coeff = m.coeff * p
-          if p == 1; m.power.delete(var); else; m.power[var] = p - 1; end
-        else m.coeff = 0; break         end
+          if p == 1
+            m.power.delete(var)
+          else
+            m.power[var] = p - 1
+          end
+        else
+          m.coeff = 0
+          break
+        end
       end
     end
     f.normalize!
@@ -591,3 +602,6 @@ class PolynomialM # Polynomial of Multi Variable
     sprintf("PolynomialM(%s)", @monomials.join(","))
   end
 end #PolynomialM
+
+# alias
+PolyM = PolynomialM
