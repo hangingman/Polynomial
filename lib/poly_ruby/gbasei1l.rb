@@ -65,7 +65,7 @@ module GBaseI1L
       while i < GBase.size
         b = GBase[i]
         if (b.degree <= h.degree) && (b.lc <= lcH)
-          q, h = h.divmodI(b)
+          q, h = h.divmod_i(b)
           if h.lc < 0; h = -h; end
           lcH = h.lc
           i = 0
@@ -106,7 +106,7 @@ module GBaseI1L
       GBase.sort! { |f1, f2| f2 <=> f1 }
       for i in 0..GBase.size - 2
         for j in i + 1..GBase.size - 1
-          q, r = GBase[i].divmodI(GBase[j])
+          q, r = GBase[i].divmod_i(GBase[j])
           if !q.zero?; new = true; GBase[i] = r.clone; end
         end
       end

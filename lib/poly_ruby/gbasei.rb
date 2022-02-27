@@ -40,7 +40,7 @@ module GBaseI
     end
     while SQueue.size > 0
       s = SQueue.pop
-      q, h = s.divmodI(GBase)
+      q, h = s.divmod_i(GBase)
       if !(h.zero?)
         GBase.each { |b| SQueue.push(getSPolyZ(b, h)) }
         GBase.push(h)
@@ -145,7 +145,7 @@ module GBaseI
     i = 0
     while (GBase.size > 1) and (i < GBase.size)
       p = GBase[i]; g = GBase.dup; g.delete_at(i)
-      q, r = p.divmodI(g)
+      q, r = p.divmod_i(g)
       if r.zero?; GBase.delete_at(i); else GBase[i] = r; i = i + 1; end
     end
     GBase.sort! { |f1, f2| f2 <=> f1 }

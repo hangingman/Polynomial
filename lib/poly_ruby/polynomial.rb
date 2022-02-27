@@ -63,7 +63,7 @@ GNU General Public License(GPL).
        return quotient,remainder
        Assume that coefficient ring may be not a field (but support /).
        Integer is treated as a kind of Rational when mathn is loaded.
-   divmodI(poly)
+   divmod_i(poly)
        return quotient,remainder
        divide in the ring Z
        Coefficients of quotient are Integer.
@@ -74,7 +74,7 @@ GNU General Public License(GPL).
        return quotient,remainder
        divide in Zp
    modZp(poly,p)
-   divZp(poly,p)
+   div_zp(poly,p)
    derivative(n=1)
        n-th derivative
    integral(n=1)
@@ -156,7 +156,7 @@ GNU General Public License(GPL).
        var is name of variable
        order: true=heigher term to lower, false=reversed
        format: "text" then "5x^4+3x^2+1"
-				"tex"       "5x^{4}+3x^{2}+1"
+               "tex"       "5x^{4}+3x^{2}+1"
                "texm"      "$5x^{4}+3x^{2}+1$"
                "prog"      "5*x**4+3*x**2+1"
    Polynomial.factor2s(factor,sep=" ")
@@ -572,14 +572,14 @@ def modI(divisor)
     if r.array.size > degD; r.array = r.array[0..degD - 1]; end
     return r.normalize!
   end
-  q, r = self.divmodI(divisor); return r
+  q, r = self.divmod_i(divisor); return r
 end
 
 def divI(divisor)
-  q, r = self.divmodI(divisor); return q
+  q, r = self.divmod_i(divisor); return q
 end
 
-def divmodI(divisor)
+def divmod_i(divisor)
   # Coefficients of quotient allow only Integer.
   # Note that degree of remainder can be greater than divisor.
   if divisor.kind_of?(Polynomial)
@@ -604,7 +604,7 @@ def divmodI(divisor)
     end
     return q.normalize!, r.normalize!
   else
-    return self.divmodI(Polynomial(divisor))
+    return self.divmod_i(Polynomial(divisor))
   end
 end
 
@@ -612,7 +612,7 @@ def modZp(divisor, p)
   q, r = self.divmodZp(divisor, p); return r
 end
 
-def divZp(divisor, p)
+def div_zp(divisor, p)
   q, r = self.divmodZp(divisor, p); return q
 end
 
@@ -1063,10 +1063,10 @@ module Factorization
     # g=g.substitute(Poly("x")/lc).coeff_to_Zp(prime,false)
     # g=g.coeff_to_Zp(prime,false)
     g = (g * Number.inv(g.lc, prime)).substitute_reverse(lc, prime)
-    q, r = f.divmodI(g)
+    q, r = f.divmod_i(g)
     if r.zero?
       g = g.substitute(Poly("x") * lc).coeff_to_Z
-      q, r = PolyN.divmodI(g)
+      q, r = PolyN.divmod_i(g)
       PolyN.array.replace(q.array); Factor.push(g)
       PolyM.array.replace(PolyN.coeff_to_Zp(prime).array)
       return true
@@ -1092,7 +1092,7 @@ module Factorization
       n = n + 1; pn = pn * prime
       if (pn > fMax) && (f - g * h).zero?
         g = g.substitute(Poly("x") * lc).coeff_to_Z
-        q, r = PolyN.divmodI(g)
+        q, r = PolyN.divmod_i(g)
         PolyN.array.replace(q.array); Factor.push(g)
         PolyM.array.replace(PolyN.coeff_to_Zp(prime).array)
         return true
@@ -1165,7 +1165,7 @@ module Factorization
         if (ite >= degD)
           setFlg, polyF = setPolyR(degD, prime)
           if setFlg
-            polyQ, polyR = PolyN.divmodI(polyF)
+            polyQ, polyR = PolyN.divmod_i(polyF)
             if polyR.zero?
               #printf "M=%s F=%s prime=%d\n",DpolyMs.to_s,polyF.to_s,prime
               PolyN.array.replace(polyQ.array)
@@ -1429,7 +1429,7 @@ module Factorization
       while (PolyN[0] % i == 0) && (0 == PolyN.substitute(i).abs)
         polyF = Polynomial([-i, 1])
         Factor.push(polyF)
-        poly, polyR = PolyN.divmodI(polyF)
+        poly, polyR = PolyN.divmod_i(polyF)
         PolyN.array.replace(poly.array)
         degN = PolyN.degree
       end
