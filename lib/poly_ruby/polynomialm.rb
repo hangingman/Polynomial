@@ -95,6 +95,7 @@
 #  PolynomialM#<=>(other)
 
 require "poly_ruby/number"
+require "poly_ruby/poly_work"
 require "poly_ruby/polynomial"
 require "poly_ruby/poly_m_parser"
 require "poly_ruby/monomial"
