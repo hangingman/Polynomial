@@ -9,16 +9,16 @@ require "rubocop/rake_task"
 
 RuboCop::RakeTask.new
 
-task default: %i[racc tag spec rubocop]
+task default: %i[tag spec rubocop]
 
 # racc
-desc 'Generates the PolyRuby parsers'
-task racc: ['lib/poly_ruby/poly_m_parser.rb']
+#desc 'Generates the PolyRuby parsers'
+#task racc: ['lib/poly_ruby/poly_m_parser.rb']
 
-file 'lib/poly_ruby/poly_m_parser.rb' => ['lib/poly_ruby/poly_m_parser.y'] do
+#file 'lib/poly_ruby/poly_m_parser.rb' => ['lib/poly_ruby/poly_m_parser.y'] do
   #sh 'bundle exec racc -v -g -o lib/poly_ruby/poly_m_parser.rb lib/poly_ruby/poly_m_parser.y'
-  sh 'bundle exec racc -o lib/poly_ruby/poly_m_parser.rb lib/poly_ruby/poly_m_parser.y'
-end
+  #sh 'bundle exec racc -o lib/poly_ruby/poly_m_parser.rb lib/poly_ruby/poly_m_parser.y'
+#end
 
 # emacs TAGS
 desc 'Generates TAG file'

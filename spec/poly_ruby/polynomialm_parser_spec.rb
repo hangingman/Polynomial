@@ -1,11 +1,11 @@
-require "poly_ruby/poly_m_parser"
+require "poly_ruby/polynomialm_parser"
 require "poly_ruby/polynomialm"
 
 
 RSpec.describe PolynomialMParser do
 
-  describe "#parse" do
-    parser = PolynomialMParser::new
+  skip "#parse" do
+    parser = PolynomialMParser
 
     it "3 == PolynomialM('3')" do
       expect(parser.parse("3")).to eq PolynomialM("3")
