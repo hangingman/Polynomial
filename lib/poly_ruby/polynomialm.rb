@@ -115,16 +115,18 @@ def PolynomialM(poly_arg1 = 0, *poly_arg2)
     return poly_arg1
   when Numeric
     if poly_arg2[0].kind_of?(Hash)
-      #coefficient and power product like Monomial
+      # coefficient and power product like Monomial
       return PolynomialM.new([Monomial(poly_arg1, poly_arg2[0])])
-    else return PolynomialM.new([Monomial.new(poly_arg1, {})])     end
+    else
+      return PolynomialM.new([Monomial.new(poly_arg1, {})])
+    end
   when String
     # generate var-names as variables in Ruby
     # and eval the expression
     poly_str = PolyWork.cnv_prog_format(poly_arg1)
     # puts "*** debug ***"
     # p poly_str
-    return PolynomialMParser.new.parse(poly_str)
+    return PolynomialMParser.new(poly_str).parse
   when Polynomial
     return PolynomialM(poly_arg1.to_s("prog"))
   when Monomial # sequence of Monomial
@@ -167,7 +169,12 @@ class PolynomialM # Polynomial of Multi Variable
     # ms,me: 数式全体のくくり
     s = ""; addS = ""
     @monomials.each { |m|
-      if (m.coeff > 0); s = s + addS; end
+      puts "to_s loop"
+      p m.class
+      p m
+      if m.coeff > 0
+        s = s + addS
+      end
       s = s + m.to_s(format); addS = "+"
     }
     if (s == ""); s = "0"; end
@@ -213,10 +220,14 @@ class PolynomialM # Polynomial of Multi Variable
     return (lc.abs == 1) || (lc.kind_of?(Rational)) || (lc.kind_of?(Float))
   end
 
-  def coeff(var, deg) # v の多項式と見ての deg 次の係数多項式を返す.
+  def coeff(var, deg) # v の多項式を見て多項式を返す.
     p = PolynomialM.new
     @monomials.each { |m|
-      if m[var] == deg; m1 = m.clone; m1.delete(var); p.monomials.push(m1); end
+      if m[var] == deg
+        m1 = m.clone
+        m1.delete(var)
+        p.monomials.push(m1)
+      end
     }
     p.normalize!; return p
   end
@@ -278,7 +289,7 @@ class PolynomialM # Polynomial of Multi Variable
   end
 
   def negate!
-    @monomials.each_index { |i| @monomial[i].negate! }
+    @monomials.map! {|m| m.-@ }
     return self
   end
 

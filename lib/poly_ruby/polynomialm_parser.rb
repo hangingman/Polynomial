@@ -1,9 +1,12 @@
+#require 'rubygems'
 require "smithereen"
+require "poly_ruby/monomial"
 
-class PolynomialMParserLexer < Smithereen::Lexer
+
+class EquationParserLexer < Smithereen::Lexer
 
   def initialize(s, options)
-    @vars = options[:vars] || ['x', 'y', 't']
+    @vars = options[:vars] || Monomial::VarOrder
     super(s)
   end
 
@@ -16,15 +19,16 @@ class PolynomialMParserLexer < Smithereen::Lexer
     when /\A\s+/m
       move $&.size
       produce_next_token
-    when /\A\d+\.\d+/           then make_token(:decimal,   $&)
-    when /\A\d+/                then make_token(:integer,   $&)
-    when /\A\+/                 then make_token(:+,         $&)
-    when /\A-/                  then make_token(:-,         $&)
-    when /\A\*/                 then make_token(:*,         $&)
-    when /\A\//                 then make_token(:/,         $&)
-    when /\A\^/                 then make_token(:'^',       $&)
-    when /\A\(/                 then make_token(:'(',       $&)
-    when /\A\)/                 then make_token(:')',       $&)
+    when /\A\d+\.\d+/           then make_token(:ratnum,   $&)
+    when /\A\d+/                then make_token(:num,      $&)
+    when /\A\+/                 then make_token(:+,        $&)
+    when /\A-/                  then make_token(:-,        $&)
+    when /\A\^/                 then make_token(:'^',      $&)
+    when /\A\*\*/               then make_token(:'**',     $&)
+    when /\A\*/                 then make_token(:*,        $&)
+    when /\A\//                 then make_token(:/,        $&)
+    when /\A\(/                 then make_token(:'(',      $&)
+    when /\A\)/                 then make_token(:')',      $&)
     when /\A[[:alpha:]]+/       then process_string($&)
     end
   end
@@ -39,7 +43,7 @@ class PolynomialMParserLexer < Smithereen::Lexer
 
 end
 
-class PolynomialMParserGrammar < Smithereen::Grammar
+class EquationParserGrammar < Smithereen::Grammar
 
 
   def initialize(options)
@@ -60,17 +64,17 @@ class PolynomialMParserGrammar < Smithereen::Grammar
 
   end
 
-  deftoken :decimal, 1000 do
+  deftoken :ratnum, 1000 do
     def value
-      @value ||= text.to_s
+      @value ||= text.to_i
     end
 
     prefix { value }
   end
 
-  deftoken :integer, 1000 do
+  deftoken :num, 1000 do
     def value
-      @value ||= text.to_s
+      @value ||= text.to_i
     end
 
     prefix { value }
@@ -78,13 +82,16 @@ class PolynomialMParserGrammar < Smithereen::Grammar
 
   deftoken :variable, 1000 do
     def value
-      @value ||= text.to_s
+      @value ||= Monomial(c=1, p={"#{text.to_s}"=>1})
     end
 
-    prefix { value }
+    prefix do
+      value
+    end
 
-    infix { |left| "#{left} * #{value}" }
-
+    infix do |left|
+      left * value
+    end
   end
 
   deftoken :name, 1000 do
@@ -121,31 +128,137 @@ class PolynomialMParserGrammar < Smithereen::Grammar
   end
 
   deftoken :+, 10 do
-    infix {|left| "#{left} + #{expression(lbp)}" }
-  end
+    infix do |left|
+      right = expression(lbp)
 
-  deftoken :*, 20 do
-    infix {|left| "#{left} * #{expression(lbp)}" }
-  end
-
-  deftoken :/, 20 do
-    infix {|left| "#{left} / #{expression(lbp)}" }
+      case [left.class,right.class]
+      when [Integer, Integer]
+        return Monomial(left + right)
+      when [Integer, Monomial]
+        return PolynomialM([Monomial(c=left), right])
+      when [Monomial, Integer]
+        return PolynomialM.new([left, Monomial(c=right)])
+      when [PolynomialM, Integer]
+        return left + right
+      when [PolynomialM, Monomial]
+        return left + right
+      when [Monomial, Monomial]
+        return PolynomialM.new([left, right])
+      else
+        raise "Parse error, type is #{left.class} + #{right.class}"
+      end
+    end
   end
 
   deftoken :-, 10 do
-    prefix { "(-1 * #{expression(lbp)})" }
-    infix {|left| "#{left} - #{expression(lbp)}" }
+    prefix do
+      expr = expression(lbp)
+      expr.negate!
+      return expr
+    end
+
+    infix {|left|
+      right = expression(lbp)
+
+      case [left.class,right.class]
+      when [Integer, Integer]
+        return Monomial(left - right)
+      when [Integer, Monomial]
+        return PolynomialM([Monomial(c=left), right.nagate])
+      when [Monomial, Integer]
+        return PolynomialM.new([left, Monomial(c=-right)])
+      when [Monomial, Monomial]
+        return PolynomialM.new([left, right.-@])
+      when [PolynomialM, Integer]
+        return PolynomialM.new([left, Monomial(c=-right)])
+      else
+        raise "Parse error, type is #{left.class} - #{right.class}"
+      end
+    }
   end
 
-  deftoken :'^', 30 do
-    infix {|left| "#{left}**#{expression(lbp - 1)}" }
+  deftoken :*, 20 do
+    infix {|left|
+      right = expression(lbp)
+
+      case [left.class,right.class]
+      when [Integer, Integer]
+        return Monomial(left * right)
+      when [Integer, Monomial]
+        return Monomial(c=left*right.coeff, p=right.power)
+      when [Monomial, Integer]
+        return Monomial(left.coeff * right, left.power)
+      when [PolynomialM, PolynomialM]
+        return left * right
+
+      else
+        raise "Parse error, type is #{left.class} * #{right.class}"
+      end
+    }
+  end
+
+  deftoken :/, 20 do
+    infix {|left|
+      right = expression(lbp)
+
+      case [left.class,right.class]
+      when [Integer, Integer]
+        return Monomial(left.quo(right))
+      when [Integer, Monomial]
+        return Monomial(c=left.quo(right.coeff), p=right.power)
+      when [Monomial, Integer]
+        return Monomial(left.coeff.quo(right), left.power)
+      when [Monomial, Monomial]
+        return left / right
+      else
+        raise "Parse error, type is #{left.class} / #{right.class}"
+      end
+    }
+  end
+
+
+  deftoken :"^", 30 do
+    infix {|left|
+      right = expression(lbp)
+
+      case [left.class,right.class]
+      when [Integer, Integer]
+        return Monomial(c=left ** right)
+      when [Monomial, Integer]
+        return left ** right
+      when [PolynomialM, Integer]
+        return left ** right
+      else
+        raise "Parse error, type is #{left.class} ** #{right.class}"
+      end
+    }
+  end
+
+  deftoken :"**", 30 do
+    infix {|left|
+      right = expression(lbp)
+
+      case [left.class,right.class]
+      when [Integer, Integer]
+        return Monomial(c=left ** right)
+      when [Monomial, Integer]
+        return left ** right
+      when [PolynomialM, Integer]
+        return left ** right
+      else
+        raise "Parse error, type is #{left.class} ** #{right.class}"
+      end
+    }
   end
 
   deftoken :'(', 50 do
     prefix do
-      '(' + expression.tap{ advance_if_looking_at! :')' } + ')'
+      in_paren = expression.tap{ advance_if_looking_at! :')' }
+      return in_paren
     end
+
     infix do |left|
+
       raise ::Smithereen::ParseError.new("Expected a function name", left) unless String === left
 
       if looking_at? :name
@@ -155,7 +268,7 @@ class PolynomialMParserGrammar < Smithereen::Grammar
               else
                 raise ::Smithereen::ParseError.new("Unrecognized function", left)
               end
-      elsif looking_at? :variable or looking_at? :integer or looking_at? :decimal or looking_at? :name
+      elsif looking_at? :variable or looking_at? :num or looking_at? :ratnum or looking_at? :name
         arg = expression(lbp)
         advance_if_looking_at(:')') or raise ::Smithereen::ParseError.new("Missing closing parenthesis", nil)
         if @@fns.keys.include? left
@@ -175,13 +288,22 @@ class PolynomialMParserGrammar < Smithereen::Grammar
 end
 
 class PolynomialMParser < Smithereen::Parser
-
-  def initialize
-     @parser_wrapper = nil
+  def initialize(s, options = {})
+    super(EquationParserGrammar.new(options), EquationParserLexer.new(s, options))
   end
 
-  def parse(s, options = {})
-    @parser_wrapper ||= super(PolynomialMParserGrammar.new(options), PolynomialMParserLexer.new(s, options))
-    return @parser_wrapper.parse
+  def parse
+    parsed = super()
+    case parsed
+    when Integer
+      return PolynomialM(parsed)
+    when Monomial
+      return PolynomialM(parsed)
+    when PolynomialM
+      return parsed
+    else
+      raise "Parse error, type is #{parsed.class}:#{parsed}"
+    end
+    return parsed
   end
 end

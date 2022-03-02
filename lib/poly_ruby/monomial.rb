@@ -201,15 +201,6 @@ class Monomial
     else
       raise TypeError
     end
-
-    # if n==1
-    #   return self
-    # end
-    #
-    # c = @coeff ** n
-    # p = @power.clone
-    # p = p.map{|k, v| [k, v*n] }.to_h
-    # return Monomial.new(c, p)
   end
 
   def *(m)
@@ -292,7 +283,9 @@ class Monomial
     when Monomial; return PolynomialM(x), PolynmialM(self)
     when Polynomial; return PolynomialM(x), PolynmialM(self)
     when PolynomialM; return x, PolynmialM(self)
-    else; raise TypeError     end
+    else
+      raise TypeError
+    end
   end
 
   ### degree & order ###

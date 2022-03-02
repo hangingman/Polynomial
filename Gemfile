@@ -16,4 +16,5 @@ end
 group :development do
   gem "ripper-tags", "= 0.9.0"
   gem "racc", "= 1.6.0"
+  gem "pry"
 end
