@@ -170,7 +170,7 @@ class EquationParserGrammar < Smithereen::Grammar
       when [Monomial, Monomial]
         return PolynomialM.new([left, right.-@])
       when [PolynomialM, Integer]
-        return PolynomialM.new([left, Monomial(c=-right)])
+        return left + Monomial(c=-right)
       else
         raise "Parse error, type is #{left.class} - #{right.class}"
       end
@@ -304,6 +304,7 @@ class PolynomialMParser < Smithereen::Parser
     else
       raise "Parse error, type is #{parsed.class}:#{parsed}"
     end
+
     return parsed
   end
 end

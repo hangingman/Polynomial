@@ -6,6 +6,8 @@ source "https://rubygems.org"
 gemspec
 gem "rake", "~> 13.0"
 gem "smithereen", :git => 'https://github.com/glv/smithereen.git'
+gem "activesupport"
+gem "bigdecimal", "1.3.5" # https://stackoverflow.com/a/60491254/2565527
 
 group :test do
   gem "rspec", "~> 3.0"

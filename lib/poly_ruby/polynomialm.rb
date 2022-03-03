@@ -94,6 +94,7 @@
 # NOT IMPLEMENTED or IMPERFECT
 #  PolynomialM#<=>(other)
 
+require "active_support/core_ext"
 require "poly_ruby/number"
 require "poly_ruby/poly_work"
 require "poly_ruby/polynomial"
@@ -183,12 +184,17 @@ class PolynomialM # Polynomial of Multi Variable
   end
 
   def normalize!
-    @monomials.each_with_index { |m, i|
-      if m.coeff == 0; @monomials[i] = nil;  # 係数 0の項を除く
-        else @monomials[i].normalize! # 単項式の正規化
-        end
-    }
+    @monomials.each_with_index do |m, i|
+      next if m.blank?
+
+      if m.coeff == 0
+        @monomials[i] = nil  # 係数 0の項を除く
+      else
+        @monomials[i].normalize! # 単項式の正規化
+      end
+    end
     @monomials.compact!
+
     self.sort!
     i0 = 0;  # power product が同じ項が複数あればまとめる.
     for i1 in 1..@monomials.size - 1
@@ -265,7 +271,7 @@ class PolynomialM # Polynomial of Multi Variable
   end
 
   def zero?
-    self.normalize!; return @monomials.empty?
+    self.normalize!; return @monomials.blank?
   end
 
   def <=>(other)
@@ -302,33 +308,20 @@ class PolynomialM # Polynomial of Multi Variable
   alias -@ negate
 
   def +(other)
+
     if other.kind_of?(PolynomialM)
       # concatiname as Array and simplify it.
-      p3 = self.clone
-      p3.monomials.concat(other.monomials)
-      p3.normalize!
-      return p3
-      #
-      #p3=PolynomialM.new([])
-      #p1=self.clone; p1.sort!; p1.normalize!; s1=p1.monomials.size
-      #p2=other.clone;p2.sort!;p2.normalize!; s2=p2.monomials.size
-      #i1=0;i2=0; m1=p1.monomials[i1]; m2=p2.monomials[i2]
-      #while (i1<s1)||(i2<s2)
-      #	if i1>=s1; l=-1
-      #	elsif i2>=s2; l=1
-      #	else l=(m1 <=> m2)
-      #	end
-      #	if l==0;
-      #		m3=m1+m2
-      #		p3.monomials.push(m3);
-      #		i1=i1+1;i2=i2+1; m1=p1.monomials[i1]; m2=p2.monomials[i2]
-      #	elsif l==-1;p3.monomials.push(m2);
-      #		i2=i2+1; m2=p2.monomials[i2]
-      #	else;p3.monomials.push(m1);
-      #		i1=i1+1; m1=p1.monomials[i1]
-      #	end
-      #end
-      #return p3
+
+      if self.zero? and other.zero? # 0+0
+        return self
+      elsif self.zero? # 0+x
+        return other
+      else # x+y
+        m = self.clone
+        m.monomials.concat(other.monomials)
+        m.normalize!
+        return m
+      end
     elsif other.kind_of?(Monomial) || other.kind_of?(Numeric)
       return self + PolynomialM(other)
     else
@@ -345,13 +338,13 @@ class PolynomialM # Polynomial of Multi Variable
     if other.kind_of?(PolynomialM)
       p = PolynomialM.new([])
       pw = PolynomialM.new([])
-      @monomials.each { |m1|
+      @monomials.each do |m1|
         pw.monomials.clear
-        other.monomials.each { |m2|
+        other.monomials.each do |m2|
           pw.monomials.push(m1 * m2)
-        }
+        end
         p = p + pw
-      }
+      end
       return p
     elsif other.kind_of?(Numeric)
       p = self.clone
