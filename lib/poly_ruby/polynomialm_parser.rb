@@ -190,6 +190,8 @@ class EquationParserGrammar < Smithereen::Grammar
         return right * left
       when [Monomial, Integer]
         return Monomial(left.coeff * right, left.power)
+      when [Monomial, Monomial]
+        return left * right
       when [PolynomialM, PolynomialM]
         multiplied = left.monomials.map do |lm|
           right.monomials.map do |rm|

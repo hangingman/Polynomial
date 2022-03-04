@@ -6,14 +6,14 @@ require "poly_ruby/gbasei" # Z coefficient Grobner basis
 
 RSpec.describe PolynomialM do
 
-  skip "can convert string to m-polynomial" do
+  it "can convert string to m-polynomial" do
     expect(PolynomialM("3x^2/2+5/2*x+7/2").to_s).to eq "3x^(2)/2+5x/2+7/2"
-    expect(PolynomialM("x^2+3x*y+y^3").to_s).to eq "x^(2)+3x*y+y^(3)"
+    expect(PolynomialM("x^2+3x*y+y^3").to_s).to eq "y^(3)+x^(2)+3x*y"
     expect(PolynomialM("(y-1)^3").to_s).to eq "y^(3)-3y^(2)+3y-1"
-    expect(PolynomialM("x+y^2").to_s).to eq "x+y^(2)"
+    expect(PolynomialM("x+y^2").to_s).to eq "y^(2)+x"
   end
 
-  skip "can do arithmetic operations for m-polynomial" do
+  it "can do arithmetic operations for m-polynomial" do
     f1=PolynomialM("x^2+3x*y+y^3")
     f2=PolynomialM("(y-1)^3")
     f3=PolynomialM("x+y^2")
@@ -21,7 +21,7 @@ RSpec.describe PolynomialM do
     expect(f4.to_s).to eq "-2y^(5)-2x^(2)*y^(2)-8x*y^(3)+y^(4)-2x^(3)-6x^(2)*y+2x*y^(2)+2y^(3)+2x^(2)+3x*y-3y^(2)+3y-1"
   end
 
-  skip "#divmod" do
+  describe "#divmod" do
     f1=PolynomialM("x^2+3x*y+y^3")
     f2=PolynomialM("(y-1)^3")
     f3=PolynomialM("x+y^2")
@@ -37,7 +37,7 @@ RSpec.describe PolynomialM do
     end
   end
 
-  skip "#substitute" do
+  describe "#substitute" do
     it "f(x,y) = x+y^(2); f(2,1) = 3" do
       f3=PolynomialM("x+y^2")
       f5=f3.substitute("x"=>2,"y"=> 1)
@@ -52,26 +52,25 @@ RSpec.describe PolynomialM do
     end
   end
 
-  skip "#derivative" do
+  describe "#derivative" do
     it "f(x) = (x+2)(x+3); d/dx f(x) = 2x+5" do
       f1=PolynomialM("(x+2)(x+3)")
       f2=f1.derivative(["x"])
       expect(f2.to_s).to eq "2x+5"
     end
-    skip "f(x) = (2x-3)^4; d/dx f(x) = 8(2x-3)^3" do
+    it "f(x) = (2x-3)^4; d/dx f(x) = 8(2x-3)^3" do
       f1=PolynomialM("(2x-3)^4")
       f2=f1.derivative(["x"])
-      #expect(f2.to_s).to eq ""
-      #expect(f2.to_s).to eq PolynomialM("8*(2*x-3)**3").to_s
+      expect(f1.to_s).to eq "16x^(4)-96x^(3)+216x^(2)-216x+81"
+      expect(f2.to_s).to eq "64x^(3)-288x^(2)+432x-216"
     end
-    skip "f(y) = (y-1)^3; d/dy f(x) = " do
-      #print "-- derivative\n"
-      #f2=PolynomialM("(y-1)^3")
-      #f6=f2.derivative(["x","x","y"])
-      #printf 'f2.derivative(["x","x","y"])=%s'+"\n",f6
+    it "f(y) = (y-1)^3; d^3f/dx^2/dy f(y) = 0" do
+      f2=PolynomialM("(y-1)^3")
+      f6=f2.derivative(["x","x","y"])
+      expect(f6.to_s).to eq "0"
     end
   end
-  skip "#integral" do
+  describe "#integral" do
     it "f(x,y) = x+y^2; ∫ f(x,y) dx dy = x*y^(3)/3+x^(2)*y/2" do
       f3=PolynomialM("x+y^2")
       f7=f3.integral(["x","y"])
@@ -83,7 +82,7 @@ end
 
 RSpec.describe GBase do
 
-  skip "#getGBase; sample1: solve equation using Grobner basis" do
+  describe "#getGBase; sample1: solve equation using Grobner basis" do
     context "f1=x+y+2z-2, f2=2x+3y+6z-5, f3=3x+2y+4z-5" do
       f1=PolynomialM("x+y+2z-2")
       f2=PolynomialM("2x+3y+6z-5")
@@ -96,7 +95,7 @@ RSpec.describe GBase do
     end
   end
 
-  skip "#getGBase; sample2: Grobner basis" do
+  describe "#getGBase; sample2: Grobner basis" do
 
     context "f1=3x^2y-y*z, f2=x*y^2+z^4" do
       f1=PolynomialM("3x^2y-y*z")
@@ -119,7 +118,7 @@ RSpec.describe GBase do
     end
   end
 
-  skip "#getGBaseZp; sample3: Grobner basis in Z/5Z coefficients" do
+  describe "#getGBaseZp; sample3: Grobner basis in Z/5Z coefficients" do
     context "f1=x+y+2z-2, f2=2x+3y+6z-5, f3=3x+2y+4z-5" do
       f1=PolynomialM("x^2+y^2+1")
       f2=PolynomialM("x^2y+2x*y+x")
@@ -131,7 +130,7 @@ RSpec.describe GBase do
     end
   end
 
-  skip "#getGBaseI; sample4: Grobner basis in Z coefficnents" do
+  describe "#getGBaseI; sample4: Grobner basis in Z coefficnents" do
     context "f1=6x^2+y^2, f2=10x^2y+2x*y" do
       Monomial.set_var_order
       Monomial.set_term_order("lex")

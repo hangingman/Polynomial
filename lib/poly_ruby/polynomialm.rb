@@ -125,9 +125,9 @@ def PolynomialM(poly_arg1 = 0, *poly_arg2)
     # generate var-names as variables in Ruby
     # and eval the expression
     poly_str = PolyWork.cnv_prog_format(poly_arg1)
-    # puts "*** debug ***"
-    # p poly_str
-    return PolynomialMParser.new(poly_str).parse
+    poly_m = PolynomialMParser.new(poly_str).parse
+    poly_m.normalize!
+    return poly_m
   when Polynomial
     return PolynomialM(poly_arg1.to_s("prog"))
   when Monomial # sequence of Monomial
@@ -185,32 +185,59 @@ class PolynomialM # Polynomial of Multi Variable
       next if m.blank?
 
       if m.coeff == 0
-        @monomials[i] = nil  # 係数 0の項を除く
+        @monomials[i] = nil # 係数0の項を除く
       else
         @monomials[i].normalize! # 単項式の正規化
       end
     end
     @monomials.compact!
-
     self.sort!
-    i0 = 0;  # power product が同じ項が複数あればまとめる.
-    for i1 in 1..@monomials.size - 1
-      if 0 == (@monomials[i0] <=> @monomials[i1])
-        @monomials[i0] += @monomials[i1]
-        @monomials[i1] = nil
-      else if @monomials[i0].coeff == 0; @monomials[i0] = nil; end
-        i0 = i1       end
+
+    # 同類項をまとめる.
+    @monomials = @monomials.group_by{|m| m.power}.map do |power,terms|
+      ans = terms.inject(:+)
+      ans
     end
-    if (i0 < @monomials.size) && (@monomials[i0].coeff == 0); @monomials[i0] = nil; end
     @monomials.compact!
+    self.sort!
+  end
+
+  def normalize(monomials)
+    monomials = monomials.map do |m|
+      next if m.blank?
+
+      if m.coeff == 0
+        nil # 係数0の項を除く
+      else
+        m.normalize! # 単項式の正規化
+        m
+      end
+    end
+    monomials.compact!
+    monomials.sort!
+
+    # 同類項をまとめる.
+    monomials = monomials.group_by{|m| m.power}.map do |power,terms|
+      ans = terms.inject(:+)
+      ans
+    end
+    monomials.compact!
   end
 
   def lt # leading term
-    if self.zero?; return Monomial(0) else return @monomials[0] end
+    if self.zero?
+      return Monomial(0)
+    else
+      return @monomials[0]
+    end
   end
 
   def lc # leading coefficient
-    if self.zero?; return 0 else return @monomials[0].coeff end
+    if self.zero?
+      return 0
+    else
+      return @monomials[0].coeff
+    end
   end
 
   def lp # leading power product
@@ -261,9 +288,6 @@ class PolynomialM # Polynomial of Multi Variable
   end
 
   def sort! # decreasing order. higher term is top.
-    ## print "polym sort! "+self.to_s+" size="+@monomials.size.to_s+"\n";
-    ## @monomials.each{|m| print "["+m.to_s+"]"};
-    ## print "\n";
     @monomials.sort! { |m1, m2| m2 <=> m1 }
   end
 
@@ -280,7 +304,14 @@ class PolynomialM # Polynomial of Multi Variable
   end
 
   def ==(other)
-    return (self - other).zero?
+
+    l = normalize(self.monomials)
+    r = normalize(other.monomials)
+    if l.blank? or r.blank?
+      return l==r
+    end
+
+    return l.zip(r).all?{|lm,rm| lm==rm}
   end
 
   def coerce(x)
@@ -597,7 +628,11 @@ class PolynomialM # Polynomial of Multi Variable
   end
 
   def inspect
-    sprintf("PolynomialM(%s)", @monomials.join(","))
+    if @monomials.blank?
+      return "PolynomialM()"
+    else
+      return sprintf "PolynomialM([%s])", @monomials.join(",")
+    end
   end
 end #PolynomialM
 

@@ -171,9 +171,9 @@ class Monomial
     if m.kind_of?(Monomial) && (0 == (self <=> m))
       return Monomial.new(@coeff + m.coeff, @power)
     elsif m.kind_of?(Monomial) || M.kind_of?(Numeric)
-      return PolynomialM(self) + PolynomialM(other)
+      return PolynomialM(self) + PolynomialM(m)
     elsif m.kind_of?(PolynomialM)
-      return PolynomialM(self) + other
+      return PolynomialM(self) + m
     else
       x, y = m.coerce(self)
       return x + m
@@ -366,5 +366,9 @@ class Monomial
     when "deglex"; return self.deglex(m)
     when "degrevlex"; return self.degrevlex(m)
     end
+  end
+
+  def inspect
+    return "Monomial(@coeff=#{@coeff}, @power=#{@power})"
   end
 end # Monomial
