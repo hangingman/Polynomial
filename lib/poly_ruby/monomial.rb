@@ -214,7 +214,6 @@ class Monomial
     else
       x, y = m.coerce(self)
       return x * m
-      #raise TypeError
     end
   end
 

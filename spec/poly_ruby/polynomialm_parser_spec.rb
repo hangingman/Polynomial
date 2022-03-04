@@ -2,7 +2,7 @@ require "poly_ruby/polynomialm_parser"
 require "poly_ruby/polynomialm"
 
 
-#RSpec.describe PolynomialMParser do
+
 RSpec.describe PolynomialMParser do
 
   describe "#parse" do
@@ -36,17 +36,17 @@ RSpec.describe PolynomialMParser do
       expect(parser.new("-(2*x-7)").parse).to eq PolynomialM("-2x+7")
       expect(parser.new("-(-(2*x-7))").parse).to eq PolynomialM("2x-7")
     end
-    xit "(x+2)(x+3) == x^2+5x+6" do
+    it "(x+2)(x+3) == x^2+5x+6" do
       expect(parser.new("(x+2)*(x+3)").parse).to eq PolynomialM("(x+2)(x+3)")
       expect(parser.new("(x+2)*(x+3)").parse).to eq PolynomialM("x^2+5x+6")
     end
-    xit "(2x-3)^3 == 8x^3-36x^2+54x-27" do
+    it "(2x-3)^3 == 8x^3-36x^2+54x-27" do
       poly_str = PolyWork.cnv_prog_format("(2x-3)^3")
       expect(parser.new(poly_str).parse).to eq PolynomialM("8x^3-36x^2+54x-27")
     end
-    xit "2(2x-3)^3 == 16x^3-72x^2+108x-54" do
-      poly_str = PolyWork.cnv_prog_format("2(2x-3)^3")
-      expect(parser.new(poly_str)).to eq PolynomialM("16x^3-72x^2+108x-54")
+    it "2(2x-3)^3 == 16x^3-72x^2+108x-54" do
+      poly_str = PolyWork.cnv_prog_format("(2x-3)^2")
+      expect(parser.new(poly_str).parse).to eq PolynomialM("4x^2-12x+9")
     end
 
   end

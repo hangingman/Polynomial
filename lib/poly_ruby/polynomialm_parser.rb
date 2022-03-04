@@ -186,11 +186,17 @@ class EquationParserGrammar < Smithereen::Grammar
         return Monomial(left * right)
       when [Integer, Monomial]
         return Monomial(c=left*right.coeff, p=right.power)
+      when [Integer, PolynomialM]
+        return right * left
       when [Monomial, Integer]
         return Monomial(left.coeff * right, left.power)
       when [PolynomialM, PolynomialM]
-        return left * right
-
+        multiplied = left.monomials.map do |lm|
+          right.monomials.map do |rm|
+            lm * rm
+          end
+        end.inject([]) { |sum, m| sum.concat(m) }
+        return PolynomialM(multiplied)
       else
         raise "Parse error, type is #{left.class} * #{right.class}"
       end
@@ -270,6 +276,7 @@ class EquationParserGrammar < Smithereen::Grammar
               end
       elsif looking_at? :variable or looking_at? :num or looking_at? :ratnum or looking_at? :name
         arg = expression(lbp)
+
         advance_if_looking_at(:')') or raise ::Smithereen::ParseError.new("Missing closing parenthesis", nil)
         if @@fns.keys.include? left
           @@fns[left] + '(' + arg + ')'

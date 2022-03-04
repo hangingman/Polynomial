@@ -170,9 +170,6 @@ class PolynomialM # Polynomial of Multi Variable
     # ms,me: 数式全体のくくり
     s = ""; addS = ""
     @monomials.each { |m|
-      puts "to_s loop"
-      p m.class
-      p m
       if m.coeff > 0
         s = s + addS
       end
@@ -336,16 +333,12 @@ class PolynomialM # Polynomial of Multi Variable
 
   def *(other)
     if other.kind_of?(PolynomialM)
-      p = PolynomialM.new([])
-      pw = PolynomialM.new([])
-      @monomials.each do |m1|
-        pw.monomials.clear
-        other.monomials.each do |m2|
-          pw.monomials.push(m1 * m2)
+      multiplied = self.monomials.map do |sm|
+        other.monomials.map do |om|
+          sm * om
         end
-        p = p + pw
-      end
-      return p
+      end.inject([]) { |sum, m| sum.concat(m) }
+      return PolynomialM(multiplied)
     elsif other.kind_of?(Numeric)
       p = self.clone
       p.monomials.each { |m| m.coeff *= other }
@@ -361,16 +354,16 @@ class PolynomialM # Polynomial of Multi Variable
   def **(n)
     if n.kind_of?(Integer)
       # calculate ** following to binary notation of "power".
-      s = PolynomialM.new([Monomial.new(1, {})])
-      p = self.clone
-      p.normalize!
-      while n > 0
-        if n & 1 == 1
-          s = s * p
-        end
-        p = p * p
-        n >>= 1
+      s = self.clone
+      s.normalize!
+      dup = s.clone
+
+      if n==1
+        return s
       end
+      (n-1).times{
+        s = s * dup
+      }
       return s
     else
       raise TypeError
