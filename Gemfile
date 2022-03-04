@@ -5,6 +5,9 @@ source "https://rubygems.org"
 # Specify your gem's dependencies in poly_ruby.gemspec
 gemspec
 gem "rake", "~> 13.0"
+gem "smithereen", :git => 'https://github.com/glv/smithereen.git'
+gem "activesupport"
+gem "bigdecimal", "1.3.5" # https://stackoverflow.com/a/60491254/2565527
 
 group :test do
   gem "rspec", "~> 3.0"
@@ -14,5 +17,5 @@ end
 
 group :development do
   gem "ripper-tags", "= 0.9.0"
-  gem "racc", "= 1.6.0"
+  gem "pry"
 end

@@ -94,9 +94,11 @@
 # NOT IMPLEMENTED or IMPERFECT
 #  PolynomialM#<=>(other)
 
+require "active_support/core_ext"
 require "poly_ruby/number"
+require "poly_ruby/poly_work"
 require "poly_ruby/polynomial"
-require "poly_ruby/poly_m_parser"
+require "poly_ruby/polynomialm_parser"
 require "poly_ruby/monomial"
 
 # Example.
@@ -114,16 +116,18 @@ def PolynomialM(poly_arg1 = 0, *poly_arg2)
     return poly_arg1
   when Numeric
     if poly_arg2[0].kind_of?(Hash)
-      #coefficient and power product like Monomial
+      # coefficient and power product like Monomial
       return PolynomialM.new([Monomial(poly_arg1, poly_arg2[0])])
-    else return PolynomialM.new([Monomial.new(poly_arg1, {})])     end
+    else
+      return PolynomialM.new([Monomial.new(poly_arg1, {})])
+    end
   when String
     # generate var-names as variables in Ruby
     # and eval the expression
     poly_str = PolyWork.cnv_prog_format(poly_arg1)
-    # puts "*** debug ***"
-    # p poly_str
-    return PolynomialMParser.new.parse(poly_str)
+    poly_m = PolynomialMParser.new(poly_str).parse
+    poly_m.normalize!
+    return poly_m
   when Polynomial
     return PolynomialM(poly_arg1.to_s("prog"))
   when Monomial # sequence of Monomial
@@ -166,7 +170,9 @@ class PolynomialM # Polynomial of Multi Variable
     # ms,me: 数式全体のくくり
     s = ""; addS = ""
     @monomials.each { |m|
-      if (m.coeff > 0); s = s + addS; end
+      if m.coeff > 0
+        s = s + addS
+      end
       s = s + m.to_s(format); addS = "+"
     }
     if (s == ""); s = "0"; end
@@ -175,31 +181,63 @@ class PolynomialM # Polynomial of Multi Variable
   end
 
   def normalize!
-    @monomials.each_with_index { |m, i|
-      if m.coeff == 0; @monomials[i] = nil;  # 係数 0の項を除く
-        else @monomials[i].normalize! # 単項式の正規化
-        end
-    }
+    @monomials.each_with_index do |m, i|
+      next if m.blank?
+
+      if m.coeff == 0
+        @monomials[i] = nil # 係数0の項を除く
+      else
+        @monomials[i].normalize! # 単項式の正規化
+      end
+    end
     @monomials.compact!
     self.sort!
-    i0 = 0;  # power product が同じ項が複数あればまとめる.
-    for i1 in 1..@monomials.size - 1
-      if 0 == (@monomials[i0] <=> @monomials[i1])
-        @monomials[i0] += @monomials[i1]
-        @monomials[i1] = nil
-      else if @monomials[i0].coeff == 0; @monomials[i0] = nil; end
-        i0 = i1       end
+
+    # 同類項をまとめる.
+    @monomials = @monomials.group_by{|m| m.power}.map do |power,terms|
+      ans = terms.inject(:+)
+      ans
     end
-    if (i0 < @monomials.size) && (@monomials[i0].coeff == 0); @monomials[i0] = nil; end
     @monomials.compact!
+    self.sort!
+  end
+
+  def normalize(monomials)
+    monomials = monomials.map do |m|
+      next if m.blank?
+
+      if m.coeff == 0
+        nil # 係数0の項を除く
+      else
+        m.normalize! # 単項式の正規化
+        m
+      end
+    end
+    monomials.compact!
+    monomials.sort!
+
+    # 同類項をまとめる.
+    monomials = monomials.group_by{|m| m.power}.map do |power,terms|
+      ans = terms.inject(:+)
+      ans
+    end
+    monomials.compact!
   end
 
   def lt # leading term
-    if self.zero?; return Monomial(0) else return @monomials[0] end
+    if self.zero?
+      return Monomial(0)
+    else
+      return @monomials[0]
+    end
   end
 
   def lc # leading coefficient
-    if self.zero?; return 0 else return @monomials[0].coeff end
+    if self.zero?
+      return 0
+    else
+      return @monomials[0].coeff
+    end
   end
 
   def lp # leading power product
@@ -212,10 +250,14 @@ class PolynomialM # Polynomial of Multi Variable
     return (lc.abs == 1) || (lc.kind_of?(Rational)) || (lc.kind_of?(Float))
   end
 
-  def coeff(var, deg) # v の多項式と見ての deg 次の係数多項式を返す.
+  def coeff(var, deg) # v の多項式を見て多項式を返す.
     p = PolynomialM.new
     @monomials.each { |m|
-      if m[var] == deg; m1 = m.clone; m1.delete(var); p.monomials.push(m1); end
+      if m[var] == deg
+        m1 = m.clone
+        m1.delete(var)
+        p.monomials.push(m1)
+      end
     }
     p.normalize!; return p
   end
@@ -246,14 +288,11 @@ class PolynomialM # Polynomial of Multi Variable
   end
 
   def sort! # decreasing order. higher term is top.
-    ## print "polym sort! "+self.to_s+" size="+@monomials.size.to_s+"\n";
-    ## @monomials.each{|m| print "["+m.to_s+"]"};
-    ## print "\n";
     @monomials.sort! { |m1, m2| m2 <=> m1 }
   end
 
   def zero?
-    self.normalize!; return @monomials.empty?
+    self.normalize!; return @monomials.blank?
   end
 
   def <=>(other)
@@ -265,7 +304,14 @@ class PolynomialM # Polynomial of Multi Variable
   end
 
   def ==(other)
-    return (self - other).zero?
+
+    l = normalize(self.monomials)
+    r = normalize(other.monomials)
+    if l.blank? or r.blank?
+      return l==r
+    end
+
+    return l.zip(r).all?{|lm,rm| lm==rm}
   end
 
   def coerce(x)
@@ -277,7 +323,7 @@ class PolynomialM # Polynomial of Multi Variable
   end
 
   def negate!
-    @monomials.each_index { |i| @monomial[i].negate! }
+    @monomials.map! {|m| m.-@ }
     return self
   end
 
@@ -290,33 +336,20 @@ class PolynomialM # Polynomial of Multi Variable
   alias -@ negate
 
   def +(other)
+
     if other.kind_of?(PolynomialM)
       # concatiname as Array and simplify it.
-      p3 = self.clone
-      p3.monomials.concat(other.monomials)
-      p3.normalize!
-      return p3
-      #
-      #p3=PolynomialM.new([])
-      #p1=self.clone; p1.sort!; p1.normalize!; s1=p1.monomials.size
-      #p2=other.clone;p2.sort!;p2.normalize!; s2=p2.monomials.size
-      #i1=0;i2=0; m1=p1.monomials[i1]; m2=p2.monomials[i2]
-      #while (i1<s1)||(i2<s2)
-      #	if i1>=s1; l=-1
-      #	elsif i2>=s2; l=1
-      #	else l=(m1 <=> m2)
-      #	end
-      #	if l==0;
-      #		m3=m1+m2
-      #		p3.monomials.push(m3);
-      #		i1=i1+1;i2=i2+1; m1=p1.monomials[i1]; m2=p2.monomials[i2]
-      #	elsif l==-1;p3.monomials.push(m2);
-      #		i2=i2+1; m2=p2.monomials[i2]
-      #	else;p3.monomials.push(m1);
-      #		i1=i1+1; m1=p1.monomials[i1]
-      #	end
-      #end
-      #return p3
+
+      if self.zero? and other.zero? # 0+0
+        return self
+      elsif self.zero? # 0+x
+        return other
+      else # x+y
+        m = self.clone
+        m.monomials.concat(other.monomials)
+        m.normalize!
+        return m
+      end
     elsif other.kind_of?(Monomial) || other.kind_of?(Numeric)
       return self + PolynomialM(other)
     else
@@ -331,16 +364,12 @@ class PolynomialM # Polynomial of Multi Variable
 
   def *(other)
     if other.kind_of?(PolynomialM)
-      p = PolynomialM.new([])
-      pw = PolynomialM.new([])
-      @monomials.each { |m1|
-        pw.monomials.clear
-        other.monomials.each { |m2|
-          pw.monomials.push(m1 * m2)
-        }
-        p = p + pw
-      }
-      return p
+      multiplied = self.monomials.map do |sm|
+        other.monomials.map do |om|
+          sm * om
+        end
+      end.inject([]) { |sum, m| sum.concat(m) }
+      return PolynomialM(multiplied)
     elsif other.kind_of?(Numeric)
       p = self.clone
       p.monomials.each { |m| m.coeff *= other }
@@ -356,16 +385,16 @@ class PolynomialM # Polynomial of Multi Variable
   def **(n)
     if n.kind_of?(Integer)
       # calculate ** following to binary notation of "power".
-      s = PolynomialM.new([Monomial.new(1, {})])
-      p = self.clone
-      p.normalize!
-      while n > 0
-        if n & 1 == 1
-          s = s * p
-        end
-        p = p * p
-        n >>= 1
+      s = self.clone
+      s.normalize!
+      dup = s.clone
+
+      if n==1
+        return s
       end
+      (n-1).times{
+        s = s * dup
+      }
       return s
     else
       raise TypeError
@@ -599,7 +628,11 @@ class PolynomialM # Polynomial of Multi Variable
   end
 
   def inspect
-    sprintf("PolynomialM(%s)", @monomials.join(","))
+    if @monomials.blank?
+      return "PolynomialM()"
+    else
+      return sprintf "PolynomialM([%s])", @monomials.join(",")
+    end
   end
 end #PolynomialM
 

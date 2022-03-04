@@ -1,3 +1,10 @@
+GIT
+  remote: https://github.com/glv/smithereen.git
+  revision: a4a79c3231eacaab487fa153d05f5752bbd62ffa
+  specs:
+    smithereen (0.3.0)
+      activesupport (~> 3.0)
+
 PATH
   remote: .
   specs:
@@ -6,12 +13,24 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
+    activesupport (3.2.22.5)
+      i18n (~> 0.6, >= 0.6.4)
+      multi_json (~> 1.0)
     ast (2.4.2)
+    bigdecimal (1.3.5)
+    coderay (1.1.3)
+    concurrent-ruby (1.1.9)
     diff-lcs (1.5.0)
+    i18n (0.9.5)
+      concurrent-ruby (~> 1.0)
+    method_source (1.0.0)
+    multi_json (1.15.0)
     parallel (1.21.0)
     parser (3.1.0.0)
       ast (~> 2.4.1)
-    racc (1.6.0)
+    pry (0.14.1)
+      coderay (~> 1.1)
+      method_source (~> 1.0)
     rainbow (3.1.1)
     rake (13.0.6)
     regexp_parser (2.2.1)
@@ -49,13 +68,16 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activesupport
+  bigdecimal (= 1.3.5)
   poly_ruby!
-  racc (= 1.6.0)
+  pry
   rake (~> 13.0)
   ripper-tags (= 0.9.0)
   rspec (~> 3.0)
   rspec-parameterized-context
   rubocop (~> 0.80)
+  smithereen!
 
 BUNDLED WITH
    2.1.4

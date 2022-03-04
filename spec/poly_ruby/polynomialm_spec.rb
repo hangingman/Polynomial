@@ -8,9 +8,9 @@ RSpec.describe PolynomialM do
 
   it "can convert string to m-polynomial" do
     expect(PolynomialM("3x^2/2+5/2*x+7/2").to_s).to eq "3x^(2)/2+5x/2+7/2"
-    expect(PolynomialM("x^2+3x*y+y^3").to_s).to eq "x^(2)+3x*y+y^(3)"
+    expect(PolynomialM("x^2+3x*y+y^3").to_s).to eq "y^(3)+x^(2)+3x*y"
     expect(PolynomialM("(y-1)^3").to_s).to eq "y^(3)-3y^(2)+3y-1"
-    expect(PolynomialM("x+y^2").to_s).to eq "x+y^(2)"
+    expect(PolynomialM("x+y^2").to_s).to eq "y^(2)+x"
   end
 
   it "can do arithmetic operations for m-polynomial" do
@@ -58,17 +58,16 @@ RSpec.describe PolynomialM do
       f2=f1.derivative(["x"])
       expect(f2.to_s).to eq "2x+5"
     end
-    skip "f(x) = (2x-3)^4; d/dx f(x) = 8(2x-3)^3" do
+    it "f(x) = (2x-3)^4; d/dx f(x) = 8(2x-3)^3" do
       f1=PolynomialM("(2x-3)^4")
       f2=f1.derivative(["x"])
-      #expect(f2.to_s).to eq ""
-      #expect(f2.to_s).to eq PolynomialM("8*(2*x-3)**3").to_s
+      expect(f1.to_s).to eq "16x^(4)-96x^(3)+216x^(2)-216x+81"
+      expect(f2.to_s).to eq "64x^(3)-288x^(2)+432x-216"
     end
-    skip "f(y) = (y-1)^3; d/dy f(x) = " do
-      #print "-- derivative\n"
-      #f2=PolynomialM("(y-1)^3")
-      #f6=f2.derivative(["x","x","y"])
-      #printf 'f2.derivative(["x","x","y"])=%s'+"\n",f6
+    it "f(y) = (y-1)^3; d^3f/dx^2/dy f(y) = 0" do
+      f2=PolynomialM("(y-1)^3")
+      f6=f2.derivative(["x","x","y"])
+      expect(f6.to_s).to eq "0"
     end
   end
   describe "#integral" do

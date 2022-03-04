@@ -171,9 +171,9 @@ class Monomial
     if m.kind_of?(Monomial) && (0 == (self <=> m))
       return Monomial.new(@coeff + m.coeff, @power)
     elsif m.kind_of?(Monomial) || M.kind_of?(Numeric)
-      return PolynomialM(self) + PolynomialM(other)
+      return PolynomialM(self) + PolynomialM(m)
     elsif m.kind_of?(PolynomialM)
-      return PolynomialM(self) + other
+      return PolynomialM(self) + m
     else
       x, y = m.coerce(self)
       return x + m
@@ -201,15 +201,6 @@ class Monomial
     else
       raise TypeError
     end
-
-    # if n==1
-    #   return self
-    # end
-    #
-    # c = @coeff ** n
-    # p = @power.clone
-    # p = p.map{|k, v| [k, v*n] }.to_h
-    # return Monomial.new(c, p)
   end
 
   def *(m)
@@ -223,7 +214,6 @@ class Monomial
     else
       x, y = m.coerce(self)
       return x * m
-      #raise TypeError
     end
   end
 
@@ -292,7 +282,9 @@ class Monomial
     when Monomial; return PolynomialM(x), PolynmialM(self)
     when Polynomial; return PolynomialM(x), PolynmialM(self)
     when PolynomialM; return x, PolynmialM(self)
-    else; raise TypeError     end
+    else
+      raise TypeError
+    end
   end
 
   ### degree & order ###
@@ -374,5 +366,9 @@ class Monomial
     when "deglex"; return self.deglex(m)
     when "degrevlex"; return self.degrevlex(m)
     end
+  end
+
+  def inspect
+    return "Monomial(@coeff=#{@coeff}, @power=#{@power})"
   end
 end # Monomial
