@@ -673,7 +673,7 @@ def <=>(other)
 end
 
 def ==(other)
-  return self.monomials.sort.zip(other.monomials.sort).all?{|l,r| l==r}
+  return (self - other).zero?
 end
 
 def to_a
