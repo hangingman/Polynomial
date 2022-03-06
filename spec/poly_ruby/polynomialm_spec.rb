@@ -8,9 +8,9 @@ RSpec.describe PolynomialM do
 
   it "can convert string to m-polynomial" do
     expect(PolynomialM("3x^2/2+5/2*x+7/2").to_s).to eq "3x^(2)/2+5x/2+7/2"
-    expect(PolynomialM("x^2+3x*y+y^3").to_s).to eq "y^(3)+x^(2)+3x*y"
+    expect(PolynomialM("x^2+3x*y+y^3").to_s).to eq "x^(2)+3x*y+y^(3)"
     expect(PolynomialM("(y-1)^3").to_s).to eq "y^(3)-3y^(2)+3y-1"
-    expect(PolynomialM("x+y^2").to_s).to eq "y^(2)+x"
+    expect(PolynomialM("x+y^2").to_s).to eq "x+y^(2)"
   end
 
   it "can do arithmetic operations for m-polynomial" do
@@ -18,22 +18,24 @@ RSpec.describe PolynomialM do
     f2=PolynomialM("(y-1)^3")
     f3=PolynomialM("x+y^2")
     f4=f1+f2-2*f3*f1+f3**2
-    expect(f4.to_s).to eq "-2y^(5)-2x^(2)*y^(2)-8x*y^(3)+y^(4)-2x^(3)-6x^(2)*y+2x*y^(2)+2y^(3)+2x^(2)+3x*y-3y^(2)+3y-1"
+    expect(f4.to_s).to eq "-2x^(3)-2x^(2)*y^(2)-6x^(2)*y+2x^(2)-8x*y^(3)+2x*y^(2)+3x*y-2y^(5)+y^(4)+2y^(3)-3y^(2)+3y-1"
   end
 
   describe "#divmod" do
     f1=PolynomialM("x^2+3x*y+y^3")
     f2=PolynomialM("(y-1)^3")
     f3=PolynomialM("x+y^2")
-    f4=f1+f2-2*f3*f1+f3**2
     it "can calc div and modulo" do
       # divmod supprots multi division.
       # It returns a pair [quotients,residue].
       # In the following sample, We get multi division f4 by f2,f3.
+      f4=f1+f2-2*f3*f1+f3**2
+      expect(f4.to_s).to eq "-2x^(3)-2x^(2)*y^(2)-6x^(2)*y+2x^(2)" +
+                            "-8x*y^(3)+2x*y^(2)+3x*y-2y^(5)+y^(4)+2y^(3)-3y^(2)+3y-1"
       q,r=f4.divmod([f1,f2])
-      expect(q[0].to_s).to eq "-2y^(2)-2x+y+2"
-      expect(q[1].to_s).to eq "0"
-      expect(r.to_s).to eq "-x^(2)*y-x*y^(2)-3x*y-3y^(2)+3y-1"
+      expect(q[0].to_s).to eq "-2x-2y^(2)+2"
+      expect(q[1].to_s).to eq "y+3"
+      expect(r.to_s).to eq "2x*y^(2)-3x*y+3y^(2)-5y+2"
     end
   end
 
@@ -74,7 +76,7 @@ RSpec.describe PolynomialM do
     it "f(x,y) = x+y^2; ∫ f(x,y) dx dy = x*y^(3)/3+x^(2)*y/2" do
       f3=PolynomialM("x+y^2")
       f7=f3.integral(["x","y"])
-      expect(f7.to_s).to eq "x*y^(3)/3+x^(2)*y/2"
+      expect(f7.to_s).to eq "x^(2)*y/2+x*y^(3)/3"
     end
   end
 end
@@ -112,7 +114,7 @@ RSpec.describe GBase do
         it do
           Monomial.set_term_order("deglex")
           gbasis=GBase.getGBase([f1,f2])
-          expect(gbasis.map(&:to_s)).to match ["z^(4)+x*y^(2)", "x^(2)*y-y*z/3"]
+          expect(gbasis.map(&:to_s)).to match ["x^(2)*y-y*z/3", "x*y^(2)+z^(4)", "x*z^(4)+y^(2)*z/3", "y^(4)*z-3z^(8)"]
         end
       end
     end
@@ -125,7 +127,9 @@ RSpec.describe GBase do
 
       it do
         gbasis=GBase.getGBaseZp([f1,f2],5)
-        expect(gbasis.map(&:to_s)).to match ["y^(3)+3x*y+4x+y", "x^(2)+y^(2)+1"]
+        expect(gbasis.map(&:to_s)).to match ["x^(2)+y^(2)+1",
+                                             "x*y+3x+2y^(3)+2y",
+                                             "y^(5)+2y^(4)+4y^(2)+4y+2"]
       end
     end
   end
@@ -139,10 +143,11 @@ RSpec.describe GBase do
 
       it do
         gbasis=GBaseI.getGBaseI([f1,f2])
-        expect(gbasis.map(&:to_s)).to match ["x^(2)*y^(3)+y^(5)+4x*y^(3)+y^(3)",
-                                             "2x^(2)*y+2y^(3)-2x*y",
-                                             "5y^(3)-6x*y",
-                                             "6x^(2)+y^(2)"]
+        expect(gbasis.map(&:to_s)).to match ["2x^(2)*y+4x*y-3y^(3)",
+                                             "6x^(2)+y^(2)",
+                                             "x*y^(3)+20y^(5)+5y^(3)",
+                                             "6x*y-5y^(3)",
+                                             "25y^(5)+6y^(3)"]
       end
     end
   end

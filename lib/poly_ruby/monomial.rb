@@ -29,7 +29,7 @@
 #               "prog"      "5*x**4+3*x**2+1"
 # Monomial.set_term_order(t)
 # Monomial.get_term_order
-#        t= "lex"(default), "deglex",  "degrevlex"
+#        t= :lex(default), :deglex,  :degrevlex
 #        set/get term order
 # Monomial.set_var_order(order)
 # Monomial.get_var_order
@@ -138,11 +138,13 @@ class Monomial
 
   def lcm(other) # lcm of power product
     m = Monomial.new(1, {})
-    VarOrder.each { |v|
-      d = [@power[v], other.power[v]].max
-      #if m != nil
+    lhs_power = @power.dup
+    rhs_power = other.power.dup
+    var_order = lhs_power.keys.concat(rhs_power.keys.dup).uniq
+
+    var_order.each { |v|
+      d = [power[v], other.power[v]].max
       m.power[v] = d
-      #end
     }
     return m
   end
@@ -151,9 +153,7 @@ class Monomial
     m = Monomial.new(1, {})
     VarOrder.each { |v|
       d = [@power[v], other.power[v]].min
-      #if m != 0
       m.power[v] = d
-      #end
     }
     return m
   end
@@ -301,9 +301,9 @@ class Monomial
   #  deglex(degreeLexicographical)
   #  degrevlex(degreeReverseLexicographical)
 
-  TermOrder = ["lex"] # "lex" "deglex" "degrevlex"
+  TermOrder = [:lex] # :lex :deglex :degrevlex
 
-  def Monomial.set_term_order(t = "lex") # t= "lex" "deglex" "degrevlex"
+  def Monomial.set_term_order(t = :lex) # t= :lex :deglex :degrevlex
     TermOrder[0] = t
   end
 
@@ -327,44 +327,73 @@ class Monomial
     if !VarOrder.include?(v); VarOrder.push(v); end
   end
 
-  def lex(m) #lexical order
-    for i in 0..VarOrder.size - 1
-      if @power[VarOrder[i]] != m.power[VarOrder[i]]
-        return @power[VarOrder[i]] <=> m.power[VarOrder[i]]
+  # lexicographic order(辞書式順序)
+  #  1: self ≺ m
+  #  0: self=m
+  # -1: m ≺ self
+  #
+  #  1 ≺ y ≺ y^2 ≺ ... ≺ x ≺ xy ≺ xy^2 ≺ ... x^2 ≺ x^2y ≺ ... x^3 ...
+  def lex(m)
+    ret = 0
+    lhs = @power
+    rhs = m.power
+    for var in VarOrder
+      if lhs[var].to_i - rhs[var].to_i != 0
+        ret = lhs[var].to_i <=> rhs[var].to_i
+        break
       end
     end
-    return 0
+    ret
   end
 
+  # reverse lexicographic order(逆辞書式順序)
+  #  1: self ≺ m
+  #  0: self=m
+  # -1: m ≺ self
   def revlex(m)
-    i = VarOrder.size - 1
-    while i >= 0
-      if @power[VarOrder[i]] != m.power[VarOrder[i]]
-        return -(@power[VarOrder[i]] <=> m.power[VarOrder[i]])
+    ret = 0
+    lhs = @power
+    rhs = m.power
+    for var in VarOrder.reverse
+      if lhs[var].to_i - rhs[var].to_i != 0
+        ret = -(lhs[var].to_i <=> rhs[var].to_i)
+        break
       end
-      i = i - 1
     end
-    return 0
+    ret
   end
 
+  # degree lexicographic order(全次数辞書式順序)
+  #  1: self ≺ m
+  #  0: self=m
+  # -1: m ≺ self
   def deglex(m)
     t1 = self.total_degree; t2 = m.total_degree
     if t1 != t2; return t1 <=> t2; end
     return self.lex(m)
   end
 
+  # degree reverse lexicographic order(全次数逆辞書式順序)
+  #  1: self ≺ m
+  #  0: self=m
+  # -1: m ≺ self
   def degrevlex(m)
     t1 = self.total_degree; t2 = m.total_degree
     if t1 != t2; return t1 <=> t2; end
     return self.revlex(m)
   end
 
-  # 1: self>m, 0: self=m, -1: self<m
-  def <=>(m)
-    case TermOrder[0]
-    when "lex"; return self.lex(m)
-    when "deglex"; return self.deglex(m)
-    when "degrevlex"; return self.degrevlex(m)
+  #  1: self ≺ m; self > m
+  #  0: self=m  ; self ==m
+  # -1: m ≺ self; self < m
+  def <=>(m, term_order=:lex)
+    case term_order
+    when :lex
+      return self.lex(m)
+    when :deglex
+      return self.deglex(m)
+    when :degrevlex
+      return self.degrevlex(m)
     end
   end
 
