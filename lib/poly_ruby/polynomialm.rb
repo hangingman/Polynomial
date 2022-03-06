@@ -110,6 +110,7 @@ def P_.method_missing(*a)
   PolynomialM(a[0].id2name)
 end
 
+
 def PolynomialM(poly_arg1 = 0, *poly_arg2)
   case poly_arg1
   when PolynomialM
@@ -224,7 +225,7 @@ class PolynomialM # Polynomial of Multi Variable
     monomials.compact!
   end
 
-  def lt # leading term
+  def lt # LT(Leading Term)
     if self.zero?
       return Monomial(0)
     else
@@ -232,13 +233,18 @@ class PolynomialM # Polynomial of Multi Variable
     end
   end
 
-  def lc # leading coefficient
+  def lc # LC(Leading Coefficient)
     if self.zero?
       return 0
     else
       return @monomials[0].coeff
     end
   end
+
+  # HT(Head Term)
+  alias_method :ht, :lt
+  # HT(Head Coefficient)
+  alias_method :hc, :lc
 
   def lp # leading power product
     if self.zero?; return Monomial(1) else return @monomials[0].power_product end
@@ -287,8 +293,8 @@ class PolynomialM # Polynomial of Multi Variable
     return deg
   end
 
-  def sort! # decreasing order. higher term is top.
-    @monomials.sort! { |m1, m2| m2 <=> m1 }
+  def sort!(term_order=:lex) # decreasing order. higher term is top.
+    @monomials.sort! { |m1, m2| m2.<=>(m1, term_order) }
   end
 
   def zero?
@@ -634,6 +640,7 @@ class PolynomialM # Polynomial of Multi Variable
       return sprintf "PolynomialM([%s])", @monomials.join(",")
     end
   end
+
 end #PolynomialM
 
 # alias

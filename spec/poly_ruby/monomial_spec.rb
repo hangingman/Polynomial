@@ -1,3 +1,4 @@
+# coding: utf-8
 require "poly_ruby/monomial"
 
 
@@ -12,12 +13,43 @@ RSpec.describe Monomial do
     expect(Monomial(c=2, p={"x"=>0}).to_s).to eq "2"
   end
   it "can get/set term order" do
-    Monomial.set_term_order("lex")
-    expect(Monomial.get_term_order).to eq "lex"
-    Monomial.set_term_order("deglex")
-    expect(Monomial.get_term_order).to eq "deglex"
-    Monomial.set_term_order("degrevlex")
-    expect(Monomial.get_term_order).to eq "degrevlex"
+    Monomial.set_term_order(:lex)
+    expect(Monomial.get_term_order).to eq :lex
+    Monomial.set_term_order(:deglex)
+    expect(Monomial.get_term_order).to eq :deglex
+    Monomial.set_term_order(:degrevlex)
+    expect(Monomial.get_term_order).to eq :degrevlex
+  end
+
+  describe "#lex(m)" do
+
+    context "Give 1 or 2 variable, use lexicographic order" do
+      it "1 -< y; 1 > y = True" do
+        expect(Monomial(c=1).lex(Monomial(c=1, p={"y"=>1}))).to eq 1
+      end
+      it "y -< y^2; y > y^2 = True" do
+        expect(Monomial(c=1, p={"y"=>1}).lex(Monomial(c=1, p={"y"=>2}))).to eq 1
+      end
+      it "x -< y; x > y = True" do
+        expect(Monomial(c=1, p={"x"=>1}).lex(Monomial(c=1, p={"y"=>1}))).to eq 1
+      end
+      it "x -< y^2; x > y^2 = True" do
+        expect(Monomial(c=1, p={"x"=>1}).lex(Monomial(c=1, p={"y"=>2}))).to eq 1
+      end
+      it "1 -< x; x > 1 = False" do
+        expect(Monomial(c=1, p={"x"=>1}).lex(Monomial(c=1))).to eq -1
+      end
+      it "x^1*y^2 -< y^3*z^4; x^1*y^2 > y^3*z^4 = True" do
+        expect(Monomial(c=1, p={"x"=>1, "y"=>2}).lex(Monomial(c=1, {"y"=>3, "z"=>4}))).to eq 1
+      end
+    end
+
+    context "Give variables >= 3, use degree lexicographic order" do
+      it "x^3*y^2*z^4 >- x^3*y^2*z^1; x^3*y^2*z^4 < x^3*y^2*z^1 = False" do
+        expect(Monomial(c=1, p={"x"=>3, "y"=>2, "z"=>4}).
+                 deglex(Monomial(c=1, {"x"=>3, "y"=>2, "z"=>1}))).to eq -1
+      end
+    end
   end
 
   describe "#power_product" do

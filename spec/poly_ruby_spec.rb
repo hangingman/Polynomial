@@ -1,4 +1,6 @@
 require "poly_ruby/polynomial"
+require "poly_ruby/polynomialm"
+require "poly_ruby/poly_work"
 require "poly_ruby/elapse"
 
 RSpec.describe PolyRuby do
@@ -15,4 +17,30 @@ RSpec.describe PolyRuby do
     expect(n).to eq 128
     expect(f1==f2).to be true
   end
+
+  context "f(x) = x^5-2y*x^2+y^5, g(x) = x^2-x^2-1" do
+
+    f=PolynomialM(PolyWork.cnv_prog_format("x^5-2y*x^2+y^5"))
+    g=PolynomialM(PolyWork.cnv_prog_format("x^2-y^2-1"))
+    f.sort!(:lex)
+    g.sort!(:lex)
+
+    it "HT(f) = x^5, HC(f) = 1" do
+      expect(f.ht.to_s).to eq "x^(5)"
+      expect(f.hc.to_s).to eq "1"
+    end
+    it "HT(g) = x^2, HC(g) = 1" do
+      expect(g.ht.to_s).to eq "x^(2)"
+      expect(g.hc.to_s).to eq "1"
+    end
+    it "spoly(f,g) = " do
+      ht_f=f.ht
+      ht_g=g.ht
+      hm_f=f.ht
+      hm_g=g.ht
+
+      #p (ht_f.lcm(ht_g)/hm_f)*f - (ht_f.lcm(ht_g)/hm_g)*g
+    end
+  end
+
 end
