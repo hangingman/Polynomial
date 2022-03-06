@@ -24,11 +24,11 @@ RSpec.describe Monomial do
   describe "#lex(m)" do
 
     context "Give 1 or 2 variable, use lexicographic order" do
-      it "1 -< y; 1 > y = True" do
-        expect(Monomial(c=1).lex(Monomial(c=1, p={"y"=>1}))).to eq 1
+      it "1 -< y; 1 < y = True" do
+        expect(Monomial(c=1).lex(Monomial(c=1, p={"y"=>1}))).to eq -1
       end
-      it "y -< y^2; y > y^2 = True" do
-        expect(Monomial(c=1, p={"y"=>1}).lex(Monomial(c=1, p={"y"=>2}))).to eq 1
+      it "y -< y^2; y < y^2 = True" do
+        expect(Monomial(c=1, p={"y"=>1}).lex(Monomial(c=1, p={"y"=>2}))).to eq -1
       end
       it "x -< y; x > y = True" do
         expect(Monomial(c=1, p={"x"=>1}).lex(Monomial(c=1, p={"y"=>1}))).to eq 1
@@ -36,8 +36,8 @@ RSpec.describe Monomial do
       it "x -< y^2; x > y^2 = True" do
         expect(Monomial(c=1, p={"x"=>1}).lex(Monomial(c=1, p={"y"=>2}))).to eq 1
       end
-      it "1 -< x; x > 1 = False" do
-        expect(Monomial(c=1, p={"x"=>1}).lex(Monomial(c=1))).to eq -1
+      it "1 -< x; 1 > x = True" do
+        expect(Monomial(c=1, p={"x"=>1}).lex(Monomial(c=1))).to eq 1
       end
       it "x^1*y^2 -< y^3*z^4; x^1*y^2 > y^3*z^4 = True" do
         expect(Monomial(c=1, p={"x"=>1, "y"=>2}).lex(Monomial(c=1, {"y"=>3, "z"=>4}))).to eq 1

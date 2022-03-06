@@ -351,14 +351,16 @@ class Monomial
   #  0: self=m
   # -1: m ≺ self
   def revlex(m)
-    i = VarOrder.size - 1
-    while i >= 0
-      if @power[VarOrder[i]] != m.power[VarOrder[i]]
-        return -(@power[VarOrder[i]] <=> m.power[VarOrder[i]])
+    ret = 0
+    lhs = @power
+    rhs = m.power
+    for var in VarOrder.reverse
+      if lhs[var].to_i - rhs[var].to_i != 0
+        ret = -(lhs[var].to_i <=> rhs[var].to_i)
+        break
       end
-      i = i - 1
     end
-    return 0
+    ret
   end
 
   # degree lexicographic order(全次数辞書式順序)
