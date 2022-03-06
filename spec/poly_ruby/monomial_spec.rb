@@ -45,9 +45,9 @@ RSpec.describe Monomial do
     end
 
     context "Give variables >= 3, use degree lexicographic order" do
-      it "x^3*y^2*z^4 >- x^3*y^2*z^1; x^3*y^2*z^4 < x^3*y^2*z^1 = False" do
+      it "x^3*y^2*z^4 >- x^3*y^2*z^1; x^3*y^2*z^4 > x^3*y^2*z^1 = True" do
         expect(Monomial(c=1, p={"x"=>3, "y"=>2, "z"=>4}).
-                 deglex(Monomial(c=1, {"x"=>3, "y"=>2, "z"=>1}))).to eq -1
+                 deglex(Monomial(c=1, {"x"=>3, "y"=>2, "z"=>1}))).to eq 1
       end
     end
   end

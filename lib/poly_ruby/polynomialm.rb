@@ -223,6 +223,7 @@ class PolynomialM # Polynomial of Multi Variable
       ans
     end
     monomials.compact!
+    return monomials
   end
 
   def lt # LT(Leading Term)
@@ -372,10 +373,12 @@ class PolynomialM # Polynomial of Multi Variable
     if other.kind_of?(PolynomialM)
       multiplied = self.monomials.map do |sm|
         other.monomials.map do |om|
-          sm * om
+          mul = sm * om
+          mul
         end
       end.inject([]) { |sum, m| sum.concat(m) }
-      return PolynomialM(multiplied)
+
+      return PolynomialM(self.normalize(multiplied))
     elsif other.kind_of?(Numeric)
       p = self.clone
       p.monomials.each { |m| m.coeff *= other }

@@ -369,7 +369,7 @@ class Monomial
   # -1: m ≺ self
   def deglex(m)
     t1 = self.total_degree; t2 = m.total_degree
-    if t1 != t2; return -(t1 <=> t2); end
+    if t1 != t2; return t1 <=> t2; end
     return self.lex(m)
   end
 
@@ -379,7 +379,7 @@ class Monomial
   # -1: m ≺ self
   def degrevlex(m)
     t1 = self.total_degree; t2 = m.total_degree
-    if t1 != t2; return -(t1 <=> t2); end
+    if t1 != t2; return t1 <=> t2; end
     return self.revlex(m)
   end
 

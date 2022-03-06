@@ -25,15 +25,17 @@ RSpec.describe PolynomialM do
     f1=PolynomialM("x^2+3x*y+y^3")
     f2=PolynomialM("(y-1)^3")
     f3=PolynomialM("x+y^2")
-    f4=f1+f2-2*f3*f1+f3**2
-    xit "can calc div and modulo" do
+    it "can calc div and modulo" do
       # divmod supprots multi division.
       # It returns a pair [quotients,residue].
       # In the following sample, We get multi division f4 by f2,f3.
+      f4=f1+f2-2*f3*f1+f3**2
+      expect(f4.to_s).to eq "-2x^(3)-2x^(2)*y^(2)-6x^(2)*y+2x^(2)" +
+                            "-8x*y^(3)+2x*y^(2)+3x*y-2y^(5)+y^(4)+2y^(3)-3y^(2)+3y-1"
       q,r=f4.divmod([f1,f2])
-      expect(q[0].to_s).to eq "-2y^(2)-2x+y+2"
-      expect(q[1].to_s).to eq "0"
-      expect(r.to_s).to eq "-x^(2)*y-x*y^(2)-3x*y-3y^(2)+3y-1"
+      expect(q[0].to_s).to eq "-2x-2y^(2)+2"
+      expect(q[1].to_s).to eq "y+3"
+      expect(r.to_s).to eq "2x*y^(2)-3x*y+3y^(2)-5y+2"
     end
   end
 
@@ -109,11 +111,10 @@ RSpec.describe GBase do
         end
       end
       context "with deglex term order" do
-        xit do
+        it do
           Monomial.set_term_order("deglex")
           gbasis=GBase.getGBase([f1,f2])
-          p gbasis.map(&:to_s)
-          expect(gbasis.map(&:to_s)).to match ["x*y^(2)+z^(4)", "x^(2)*y-y*z/3"]
+          expect(gbasis.map(&:to_s)).to match ["x^(2)*y-y*z/3", "x*y^(2)+z^(4)", "x*z^(4)+y^(2)*z/3", "y^(4)*z-3z^(8)"]
         end
       end
     end
@@ -124,9 +125,11 @@ RSpec.describe GBase do
       f1=PolynomialM("x^2+y^2+1")
       f2=PolynomialM("x^2y+2x*y+x")
 
-      xit do
+      it do
         gbasis=GBase.getGBaseZp([f1,f2],5)
-        expect(gbasis.map(&:to_s)).to match ["y^(3)+3x*y+4x+y", "x^(2)+y^(2)+1"]
+        expect(gbasis.map(&:to_s)).to match ["x^(2)+y^(2)+1",
+                                             "x*y+3x+2y^(3)+2y",
+                                             "y^(5)+2y^(4)+4y^(2)+4y+2"]
       end
     end
   end
@@ -138,12 +141,13 @@ RSpec.describe GBase do
       f1=PolynomialM("6x^2+y^2")
       f2=PolynomialM("10x^2y+2x*y")
 
-      xit do
+      it do
         gbasis=GBaseI.getGBaseI([f1,f2])
-        expect(gbasis.map(&:to_s)).to match ["x^(2)*y^(3)+y^(5)+4x*y^(3)+y^(3)",
-                                             "2x^(2)*y+2y^(3)-2x*y",
-                                             "5y^(3)-6x*y",
-                                             "6x^(2)+y^(2)"]
+        expect(gbasis.map(&:to_s)).to match ["2x^(2)*y+4x*y-3y^(3)",
+                                             "6x^(2)+y^(2)",
+                                             "x*y^(3)+20y^(5)+5y^(3)",
+                                             "6x*y-5y^(3)",
+                                             "25y^(5)+6y^(3)"]
       end
     end
   end
