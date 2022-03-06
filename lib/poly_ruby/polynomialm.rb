@@ -196,8 +196,12 @@ class PolynomialM # Polynomial of Multi Variable
 
     # 同類項をまとめる.
     @monomials = @monomials.group_by{|m| m.power}.map do |power,terms|
-      ans = terms.inject(:+)
-      ans
+      m = terms.inject(:+)
+      if m.coeff == 0
+        nil # 係数0の項を除く
+      else
+        m
+      end
     end
     @monomials.compact!
     self.sort!
@@ -219,8 +223,8 @@ class PolynomialM # Polynomial of Multi Variable
 
     # 同類項をまとめる.
     monomials = monomials.group_by{|m| m.power}.map do |power,terms|
-      ans = terms.inject(:+)
-      ans
+      m = terms.inject(:+)
+      m
     end
     monomials.compact!
     return monomials
@@ -366,7 +370,7 @@ class PolynomialM # Polynomial of Multi Variable
   end
 
   def -(other)
-    return self + (-other)
+    self + (-other)
   end
 
   def *(other)

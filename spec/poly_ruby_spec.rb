@@ -25,6 +25,11 @@ RSpec.describe PolyRuby do
     f.sort!(:lex)
     g.sort!(:lex)
 
+    ht_f=f.ht
+    ht_g=g.ht
+    hm_f=f.ht
+    hm_g=g.ht
+
     it "HT(f) = x^5, HC(f) = 1" do
       expect(f.ht.to_s).to eq "x^(5)"
       expect(f.hc.to_s).to eq "1"
@@ -33,14 +38,19 @@ RSpec.describe PolyRuby do
       expect(g.ht.to_s).to eq "x^(2)"
       expect(g.hc.to_s).to eq "1"
     end
-    it "spoly(f,g) = " do
-      ht_f=f.ht
-      ht_g=g.ht
-      hm_f=f.ht
-      hm_g=g.ht
-
-      #p (ht_f.lcm(ht_g)/hm_f)*f - (ht_f.lcm(ht_g)/hm_g)*g
+    it "lcm(HT(f), HT(g)) = x^5" do
+      expect(ht_f.lcm(ht_g).to_s).to eq "x^(5)"
     end
-  end
+    it "lcm(HT(f), HT(g))*f/HM(f) = x^5-2x^2*y+y^5" do
+      expect((ht_f.lcm(ht_g)*f/hm_f).to_s).to eq "x^(5)-2x^(2)*y+y^(5)"
+    end
+    it "lcm(HT(f), HT(g))*f/HM(g) = x^5-x^3*y^2-x^3" do
+      expect((ht_f.lcm(ht_g)*g/hm_g).to_s).to eq "x^(5)-x^(3)*y^(2)-x^(3)"
+    end
+    it "spoly(f,g) = x^3*y^2+x^3-2x^2*y+y^5" do
+      expect(((ht_f.lcm(ht_g)*f/hm_f) - (ht_f.lcm(ht_g)*g/hm_g)).to_s).
+        to eq "x^(3)*y^(2)+x^(3)-2x^(2)*y+y^(5)"
+    end
 
+  end
 end
