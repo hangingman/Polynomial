@@ -28,7 +28,10 @@
 # print "Check infinity.rb.  1.0/0.0 and 0.0/0.0 may cause error.\n"
 
 class InfinityClass
-  def initialize(type, v = 0); @type = type; @val = v; end
+  def initialize(type, v = 0)
+    @type = type
+    @val = v
+ end
 
   attr :type
   Infn = InfinityClass.new(0) # -Infinty
@@ -43,24 +46,24 @@ class InfinityClass
   def InfinityClass.cnvInfinityClass(x)
     v = checkInfinity(x)
     if v.kind_of?(InfinityClass)
-      return v
+      v
     elsif defined?(Complex) && x.kind_of?(Complex)
       if x.imag == 0
-        return InfinityClass(2 + (x.real <=> 0), x.real)
+        InfinityClass(2 + (x.real <=> 0), x.real)
       else
-        return InfinityClass(5, x)
+        InfinityClass(5, x)
       end
     elsif x.kind_of?(Float) ||
           x.kind_of?(Integer) ||
           (defined?(Rational) && x.kind_of?(Rational))
-      return InfinityClass(2 + (x <=> 0), x)
+      InfinityClass(2 + (x <=> 0), x)
     else
-      return Indefinite
+      Indefinite
     end
   end
 
   def eql?(o)
-    if o.kind_of?(InfinityClass); return @type == o.type else return false end
+    if o.kind_of?(InfinityClass); @type == o.type else false end
   end
 
   def hash
@@ -72,26 +75,26 @@ class InfinityClass
           "complexFinite", "unsignedInfinity", "Indefinite"]
 
   def to_s
-    return STbl[@type]
+    STbl[@type]
   end
 
   NegTbl = [Inf, Fi, Z, Fin, Infn, Fic, Infu, Indef]
 
   def -@
-    return NegTbl[@type]
+    NegTbl[@type]
   end
 
   def readTbl2(o, tbl)
     i = @type
     if o.kind_of?(InfinityClass); j = o.type; elsif defined?(Complex) && o.kind_of?(Complex)
-      if o.image == 0; return self.readTbl2(o.real, tbl); else j = 5; end
+                                                if o.image == 0; return self.readTbl2(o.real, tbl); else j = 5; end
     elsif o.kind_of?(Float)
       o = checkInfinity(o)
       if o.kind_of?(InfinityClass); j = o.type else j = (o <=> 0) + 2; end
     elsif o.kind_of?(Integer) || (defined?(Rational) && o.kind_of?(Rational))
       j = (o <=> 0) + 2
     else return Indef     end
-    return tbl[i][j]
+    tbl[i][j]
   end
 
   ##### table  format ######
@@ -121,36 +124,36 @@ class InfinityClass
   ]
 
   def <=>(o)
-    return self.readTbl2(o, CmpTbl)
+    self.readTbl2(o, CmpTbl)
   end
 
   def ==(o)
     r = (self <=> o)
-    if r.kind_of?(Integer); return r == 0; else return Number.NaN_IEEE754; end
+    if r.kind_of?(Integer); r == 0; else Number.NaN_IEEE754; end
   end
 
   def <=(o)
     r = (self <=> o)
-    if r.kind_of?(Integer); return r <= 0; else return Number.NaN_IEEE754; end
+    if r.kind_of?(Integer); r <= 0; else Number.NaN_IEEE754; end
   end
 
   def <(o)
     r = (self <=> o)
-    if r.kind_of?(Integer); return r < 0; else return Number.NaN_IEEE754; end
+    if r.kind_of?(Integer); r < 0; else Number.NaN_IEEE754; end
   end
 
   def >=(o)
     r = (self <=> o)
-    if r.kind_of?(Integer); return r >= 0; else return Number.NaN_IEEE754; end
+    if r.kind_of?(Integer); r >= 0; else Number.NaN_IEEE754; end
   end
 
   def >(o)
     r = (self <=> o)
-    if r.kind_of?(Integer); return r > 0; else return Number.NaN_IEEE754; end
+    if r.kind_of?(Integer); r > 0; else Number.NaN_IEEE754; end
   end
 
   def between?(a, b)
-    return (self > a) && (self < b)
+    (self > a) && (self < b)
   end
 
   AddTbl = [
@@ -165,7 +168,7 @@ class InfinityClass
   ]
 
   def +(o)
-    return self.readTbl2(o, AddTbl)
+    self.readTbl2(o, AddTbl)
   end
 
   SubTbl = [
@@ -179,7 +182,7 @@ class InfinityClass
     [Indef, Indef, Indef, Indef, Indef, Indef, Indef, Indef],
   ]
 
-  def -(o); return self.readTbl2(o, SubTbl); end
+  def -(o); self.readTbl2(o, SubTbl); end
 
   MulTbl = [
     [Inf, Inf, Indef, Infn, Infn, Infu, Infu, Indef],
@@ -192,7 +195,7 @@ class InfinityClass
     [Indef, Indef, Indef, Indef, Indef, Indef, Indef, Indef],
   ]
 
-  def *(o); return self.readTbl2(o, MulTbl); end
+  def *(o); self.readTbl2(o, MulTbl); end
 
   DivTbl = [
     [Indef, Inf, Infu, Infn, Indef, Infu, Indef, Indef],
@@ -205,7 +208,7 @@ class InfinityClass
     [Indef, Indef, Indef, Indef, Indef, Indef, Indef, Indef],
   ]
 
-  def /(o); return self.readTbl2(o, DivTbl); end
+  def /(o); self.readTbl2(o, DivTbl); end
 
   PowTbl = [
     [Z, Z, Indef, Infu, Infu, Infu, Infu, Indef],
@@ -222,27 +225,27 @@ class InfinityClass
     r = self.readTbl2(o, PowTbl)
     if r == T
       if @val == 1
-        return Indef
+        Indef
       elsif @val == -1
-        return Indef
+        Indef
       elsif @val.abs < 1
-        return 0
+        0
       elsif defined?(Complex) && @val.kind_of?(Complex) # complex self.abs>1
-        return Infu
+        Infu
       elsif @val > 1
         case o.type
-        when 0; return 0
-        when 4; return Inf
-        when 6; return Infu
+        when 0; 0
+        when 4; Inf
+        when 6; Infu
         end
       else # @val<-1
-        return Infu
+        Infu
       end
-    else return r     end
+    else r     end
   end
 
   def coerce(x)
-    return InfinityClass.cnvInfinityClass(x), self
+    [InfinityClass.cnvInfinityClass(x), self]
   end
 
   def inspect
@@ -256,12 +259,12 @@ Indefinite = InfinityClass::Indef # indefinite
 
 def checkInfinity(x)
   if x.kind_of?(Float) && x.to_s == "Infinity"
-    return Infinity
+    Infinity
   elsif x.kind_of?(Float) && x.to_s == "-Infinity"
-    return -Infinity
+    -Infinity
   elsif x.kind_of?(Float) && x.to_s == "NaN"
-    return Indefinite
+    Indefinite
   else
-    return x
+    x
   end
 end

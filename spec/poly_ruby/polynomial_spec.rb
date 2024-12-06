@@ -42,11 +42,11 @@ RSpec.describe Polynomial do
 
     describe "#substitute" do
       it "can substitule a number" do
-        f7=f1.substitute(2);
+        f7=f1.substitute(2)
         expect(f7.to_s).to eq "16"
       end
       it "can substitute a polynomial to a polynomial" do
-        f8=f1.substitute(f3);
+        f8=f1.substitute(f3)
         expect(f8.to_s).to eq "x^(8)+8x^(7)+32x^(6)+80x^(5)+142x^(4)+184x^(3)+176x^(2)+112x+49"
       end
     end

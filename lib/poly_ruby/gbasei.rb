@@ -24,11 +24,14 @@ module GBaseI
   end
 
   def getSPolyZ(f, g)
-    lpF = f.lp; lcF = f.lc
-    lpG = g.lp; lcG = g.lc
-    lcmP = lpF.lcm(lpG); lcmC = Number.lcm(lcF.abs, lcG.abs);  # lcm=fc*gc/gcd
+    lpF = f.lp
+    lcF = f.lc
+    lpG = g.lp
+    lcG = g.lc
+    lcmP = lpF.lcm(lpG)
+    lcmC = Number.lcm(lcF.abs, lcG.abs)
     s = PolynomialM(lcmP / lpF) * f * (lcmC.div(lcF)) - PolynomialM(lcmP / lpG) * g * (lcmC.div(lcG))
-    return s
+    s
   end
 
   def makeGBaseI
@@ -63,7 +66,8 @@ module GBaseI
         if lcmP.divisible?(poly.lp); sat.push(poly); end
       end
       if sat.empty?; return; end
-      cj = []; sat.each_index { |k| cj.push(sat[k].lc) }
+      cj = []
+      sat.each_index { |k| cj.push(sat[k].lc) }
       cJ, *aj = Number.gcd2(cj)
       fJ = PolynomialM(0)
       sat.each_with_index { |f, k| fJ = fJ + PolynomialM(lcmP / f.lp) * f * aj[k] }
@@ -75,7 +79,8 @@ module GBaseI
       lp = GBase[i].lp
       searchSaturatedSubsetI(i + 1, lcmP)
       if !(lcmP.divisible?(lp))
-        lcmP = lcmP.lcm(lp); searchSaturatedSubsetI(i + 1, lcmP)
+        lcmP = lcmP.lcm(lp)
+        searchSaturatedSubsetI(i + 1, lcmP)
       end
     end
   end
@@ -94,7 +99,8 @@ module GBaseI
         if 0 == (GBase[i].lp <=> GBase[j].lp)
           gcd, *a = Number.gcd2(GBase[i].lc, GBase[j].lc)
           f = GBase[i] * a[0] + GBase[j] * a[1]
-          GBase[i] = f; GBase.delete_at(j)
+          GBase[i] = f
+          GBase.delete_at(j)
         else j = j + 1         end
       end
       i = i + 1
@@ -144,9 +150,15 @@ module GBaseI
     end
     i = 0
     while (GBase.size > 1) and (i < GBase.size)
-      p = GBase[i]; g = GBase.dup; g.delete_at(i)
+      p = GBase[i]
+      g = GBase.dup
+      g.delete_at(i)
       q, r = p.divmod_i(g)
-      if r.zero?; GBase.delete_at(i); else GBase[i] = r; i = i + 1; end
+      if r.zero?
+        GBase.delete_at(i)
+      else GBase[i] = r
+           i = i + 1
+      end
     end
     GBase.sort! { |f1, f2| f2 <=> f1 }
     if $0 == __FILE__
@@ -175,7 +187,8 @@ module GBaseI
     #printGb
     makeMinimalStrongGBI
     #printGb
-    GBase.sort! { |f1, f2| f2 <=> f1 }; return GBase
+    GBase.sort! { |f1, f2| f2 <=> f1 }
+    GBase
   end
 
   module_function :printGb, :getSPolyZ

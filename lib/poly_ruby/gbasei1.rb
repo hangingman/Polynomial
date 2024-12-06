@@ -33,13 +33,16 @@ module GBaseI1
     while SQueue.size > 0
       h = SQueue.pop
       if h.lc < 0; h = -h; end
-      lcH = h.lc; i = 0
+      lcH = h.lc
+      i = 0
       while i < GBase.size
         b = GBase[i]
         if (b.degree <= h.degree) && (b.lc <= lcH)
-          q, r = h.divmod_i(b); h = r
+          q, r = h.divmod_i(b)
+          h = r
           if h.lc < 0; h = -h; end
-          lcH = h.lc; i = 0
+          lcH = h.lc
+          i = 0
         else i = i + 1         end
       end
       if !(h.zero?)
@@ -51,20 +54,25 @@ module GBaseI1
   end
 
   def makeStrongGB # make strong Grobner basis
-    absGB; strongGb = []; i = 0
+    absGB
+    strongGb = []
+    i = 0
     sat = []  #saturated subset
     GBase.sort! { |f1, f2| f1 <=> f2 }
     while i < GBase.size
       deglcm = GBase[i].degree
       while (i + 1 <= GBase.size - 1) && (deglcm == GBase[i + 1].degree); i = i + 1; end
       sat = GBase[0..i] # set saturated subset
-      cj = []; sat.each_index { |k| cj.push(sat[k].lc) }
-      cJ, *aj = Number.gcd2(cj); fJ = Polynomial(0)
+      cj = []
+      sat.each_index { |k| cj.push(sat[k].lc) }
+      cJ, *aj = Number.gcd2(cj)
+      fJ = Polynomial(0)
       sat.each_with_index { |f, k| fJ = fJ + Polynomial.term(aj[k], deglcm - f.degree) * f }
       strongGb.push(fJ)
       i = i + 1
     end
-    GBase.replace(strongGb); GBase.sort! { |f1, f2| f2 <=> f1 }
+    GBase.replace(strongGb)
+    GBase.sort! { |f1, f2| f2 <=> f1 }
   end
 
   def makeMinimalStrongGB # reduced minimal strong GB
@@ -75,7 +83,10 @@ module GBaseI1
       for i in 0..GBase.size - 2
         for j in i + 1..GBase.size - 1
           q, r = GBase[i].divmod_i(GBase[j])
-          if !q.zero?; new = true; GBase[i] = r.clone; end
+          if !q.zero?
+            new = true
+            GBase[i] = r.clone
+          end
         end
       end
       g1 = []
@@ -98,8 +109,11 @@ module GBaseI1
         SQueue.push(GBase[i].getSPolyZ(GBase[j]))
       end
     end
-    makeGBase; makeStrongGB; makeMinimalStrongGB; GBase.sort! { |f1, f2| f2 <=> f1 }
-    return GBase
+    makeGBase
+    makeStrongGB
+    makeMinimalStrongGB
+    GBase.sort! { |f1, f2| f2 <=> f1 }
+    GBase
   end
 
   module_function :printGb, :absGB

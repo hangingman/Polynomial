@@ -314,6 +314,6 @@ class PolynomialMParser < Smithereen::Parser
       raise "Parse error, type is #{parsed.class}:#{parsed}"
     end
 
-    return parsed
+    parsed
   end
 end

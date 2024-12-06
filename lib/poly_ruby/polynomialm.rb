@@ -94,6 +94,7 @@
 # NOT IMPLEMENTED or IMPERFECT
 #  PolynomialM#<=>(other)
 
+require "rexml/rexml"
 require "active_support/core_ext"
 require "poly_ruby/number"
 require "poly_ruby/poly_work"
@@ -114,13 +115,13 @@ end
 def PolynomialM(poly_arg1 = 0, *poly_arg2)
   case poly_arg1
   when PolynomialM
-    return poly_arg1
+    poly_arg1
   when Numeric
     if poly_arg2[0].kind_of?(Hash)
       # coefficient and power product like Monomial
-      return PolynomialM.new([Monomial(poly_arg1, poly_arg2[0])])
+      PolynomialM.new([Monomial(poly_arg1, poly_arg2[0])])
     else
-      return PolynomialM.new([Monomial.new(poly_arg1, {})])
+      PolynomialM.new([Monomial.new(poly_arg1, {})])
     end
   when String
     # generate var-names as variables in Ruby
@@ -128,16 +129,16 @@ def PolynomialM(poly_arg1 = 0, *poly_arg2)
     poly_str = PolyWork.cnv_prog_format(poly_arg1)
     poly_m = PolynomialMParser.new(poly_str).parse
     poly_m.normalize!
-    return poly_m
+    poly_m
   when Polynomial
-    return PolynomialM(poly_arg1.to_s("prog"))
+    PolynomialM(poly_arg1.to_s("prog"))
   when Monomial # sequence of Monomial
-    return PolynomialM.new([poly_arg1] + poly_arg2)
+    PolynomialM.new([poly_arg1] + poly_arg2)
   when Array
     if poly_arg1[0].kind_of? Monomial
-      return PolynomialM.new(poly_arg1) # Array of Monomial
+      PolynomialM.new(poly_arg1) # Array of Monomial
     else # A generating function. May be.
-      return PolynomialM(Polynomial(poly_arg1))
+      PolynomialM(Polynomial(poly_arg1))
     end
   else
     raise TypeError
@@ -155,30 +156,56 @@ class PolynomialM # Polynomial of Multi Variable
     ms = []
     @monomials.each { |m| ms.push(m.clone) }
     p = PolynomialM.new(ms)
-    return p
+    p
   end
 
   def to_s(format = "text")
     case format
-    when "text"; timeC = ""; timeV = "*"; power1 = "^("; power2 = ")"; ms = ""; me = ""
-    when "tex"; timeC = ""; timeV = ""; power1 = "^{"; power2 = "}"; ms = ""; me = ""
-    when "texm"; timeC = ""; timeV = ""; power1 = "^{"; power2 = "}"; ms = "$"; me = "$"
-    when "prog"; timeC = "*"; timeV = "*"; power1 = "**("; power2 = ")"; ms = ""; me = ""
+    when "text"
+      timeC = ""
+      timeV = "*"
+      power1 = "^("
+      power2 = ")"
+      ms = ""
+      me = ""
+    when "tex"
+      timeC = ""
+      timeV = ""
+      power1 = "^{"
+      power2 = "}"
+      ms = ""
+      me = ""
+    when "texm"
+      timeC = ""
+      timeV = ""
+      power1 = "^{"
+      power2 = "}"
+      ms = "$"
+      me = "$"
+    when "prog"
+      timeC = "*"
+      timeV = "*"
+      power1 = "**("
+      power2 = ")"
+      ms = ""
+      me = ""
     end
     # timeC: 係数と変数間の記号
     # timeV: 変数間の分離記号
     # power1, power2: 指数部の開始と終了
     # ms,me: 数式全体のくくり
-    s = ""; addS = ""
+    s = ""
+    addS = ""
     @monomials.each { |m|
       if m.coeff > 0
         s = s + addS
       end
-      s = s + m.to_s(format); addS = "+"
+      s = s + m.to_s(format)
+      addS = "+"
     }
     if (s == ""); s = "0"; end
     s = ms + s + me # math start and math end
-    return s
+    s
   end
 
   def normalize!
@@ -227,22 +254,22 @@ class PolynomialM # Polynomial of Multi Variable
       m
     end
     monomials.compact!
-    return monomials
+    monomials
   end
 
   def lt # LT(Leading Term)
     if self.zero?
-      return Monomial(0)
+      Monomial(0)
     else
-      return @monomials[0]
+      @monomials[0]
     end
   end
 
   def lc # LC(Leading Coefficient)
     if self.zero?
-      return 0
+      0
     else
-      return @monomials[0].coeff
+      @monomials[0].coeff
     end
   end
 
@@ -252,13 +279,13 @@ class PolynomialM # Polynomial of Multi Variable
   alias_method :hc, :lc
 
   def lp # leading power product
-    if self.zero?; return Monomial(1) else return @monomials[0].power_product end
+    if self.zero?; Monomial(1) else @monomials[0].power_product end
   end
 
   def unit?
     if 0 < self.lp.total_degree; return false; end
     lc = self.lc
-    return (lc.abs == 1) || (lc.kind_of?(Rational)) || (lc.kind_of?(Float))
+    (lc.abs == 1) || (lc.kind_of?(Rational)) || (lc.kind_of?(Float))
   end
 
   def coeff(var, deg) # v の多項式を見て多項式を返す.
@@ -270,7 +297,8 @@ class PolynomialM # Polynomial of Multi Variable
         p.monomials.push(m1)
       end
     }
-    p.normalize!; return p
+    p.normalize!
+    p
   end
 
   def vars # 式に含まれる 変数名一覧
@@ -282,20 +310,20 @@ class PolynomialM # Polynomial of Multi Variable
     }
     vorder = Monomial.get_var_order
     vs.sort! { |v1, v2| vorder.index(v1) <=> vorder.index(v2) }
-    return vs
+    vs
   end
 
   def maxdeg(var) # var の多項式と見ての最高次数
     deg = 0
     @monomials.each { |m| if deg < m.power[var]; deg = m.power[var]; end }
-    return deg
+    deg
   end
 
   def mindeg(var) # var の多項式と見ての最低次数
     deg = nil
     @monomials.each { |m| if (deg == nil) || (deg < m[var]); deg = m[var]; end }
     if deg == nil; deg = 0; end
-    return deg
+    deg
   end
 
   def sort!(term_order=:lex) # decreasing order. higher term is top.
@@ -303,15 +331,16 @@ class PolynomialM # Polynomial of Multi Variable
   end
 
   def zero?
-    self.normalize!; return @monomials.blank?
+    self.normalize!
+    @monomials.blank?
   end
 
   def <=>(other)
-    return self.lt <=> other.lt
+    self.lt <=> other.lt
   end
 
   def <(other)
-    return (self.lt <=> other.lt) < 0
+    (self.lt <=> other.lt) < 0
   end
 
   def ==(other)
@@ -322,26 +351,26 @@ class PolynomialM # Polynomial of Multi Variable
       return l==r
     end
 
-    return l.zip(r).all?{|lm,rm| lm==rm}
+    l.zip(r).all?{|lm,rm| lm==rm}
   end
 
   def coerce(x)
     case x
-    when Numeric; return PolynomialM.new([Monomial.new(x, {})]), self
-    when Monomial; return PolynomialM.new([x]), self
-    when Polynomial; return PolynomialM(x), self
+    when Numeric; [PolynomialM.new([Monomial.new(x, {})]), self]
+    when Monomial; [PolynomialM.new([x]), self]
+    when Polynomial; [PolynomialM(x), self]
     else; raise TypeError     end
   end
 
   def negate!
     @monomials.map! {|m| m.-@ }
-    return self
+    self
   end
 
   def negate
     p = PolynomialM.new
     @monomials.each { |m| p.monomials.push(-m) }
-    return p
+    p
   end
 
   alias -@ negate
@@ -352,20 +381,20 @@ class PolynomialM # Polynomial of Multi Variable
       # concatiname as Array and simplify it.
 
       if self.zero? and other.zero? # 0+0
-        return self
+        self
       elsif self.zero? # 0+x
-        return other
+        other
       else # x+y
         m = self.clone
         m.monomials.concat(other.monomials)
         m.normalize!
-        return m
+        m
       end
     elsif other.kind_of?(Monomial) || other.kind_of?(Numeric)
-      return self + PolynomialM(other)
+      self + PolynomialM(other)
     else
       x, y = a.coerce(self)
-      return x + y
+      x + y
     end
   end
 
@@ -382,16 +411,16 @@ class PolynomialM # Polynomial of Multi Variable
         end
       end.inject([]) { |sum, m| sum.concat(m) }
 
-      return PolynomialM(self.normalize(multiplied))
+      PolynomialM(self.normalize(multiplied))
     elsif other.kind_of?(Numeric)
       p = self.clone
       p.monomials.each { |m| m.coeff *= other }
-      return p
+      p
     elsif other.kind_of?(Monomial)
-      return self * PolynomialM(other)
+      self * PolynomialM(other)
     else
       x, y = a.coerce(self)
-      return x * y
+      x * y
     end
   end
 
@@ -408,7 +437,7 @@ class PolynomialM # Polynomial of Multi Variable
       (n-1).times{
         s = s * dup
       }
-      return s
+      s
     else
       raise TypeError
     end
@@ -418,13 +447,16 @@ class PolynomialM # Polynomial of Multi Variable
     if divisors.kind_of?(Array) && divisors[0].kind_of?(PolynomialM)
       # Multiple division.
       # "divisors" and quotient "q" are Array of PolynomialM
-      h = self.clone; h.normalize!
+      h = self.clone
+      h.normalize!
       # sort as heigher be top
       #divisors.sort!{|f1,f2| f2.lt<=>f1.lt};
       ltD = [];  # leading terms of divisors
       q = [];  # quotients
-      divisors.each_with_index { |f, i| ltD[i] = f.lt; q[i] = PolynomialM.new }
-      r = PolynomialM.new; pw = PolynomialM.new
+      divisors.each_with_index { |f, i| ltD[i] = f.lt
+                                        q[i] = PolynomialM.new }
+      r = PolynomialM.new
+      pw = PolynomialM.new
       while !h.monomials.empty?
         i = 0
         ltH = h.lt
@@ -441,29 +473,34 @@ class PolynomialM # Polynomial of Multi Variable
             i = i + 1
           end
         end
-        if !h.monomials.empty?; r.monomials.push(ltH); h.monomials.shift; end
+        if !h.monomials.empty?
+          r.monomials.push(ltH)
+          h.monomials.shift
+ end
       end
-      return q, r
+      [q, r]
     elsif divisors.kind_of?(PolynomialM)
-      return self.divmod([divisors])
+      self.divmod([divisors])
     elsif divisors.kind_of?(Numeric)
       p = self.clone
       p.monomials.each { |m| m.coeff = Number.divII(m.coeff, divisors) }
-      return [p], PolynomialM(0)
+      [[p], PolynomialM(0)]
     elsif divisors.kind_of?(Monomial)
-      return self.divmod([PolynomialM(divisors)])
+      self.divmod([PolynomialM(divisors)])
     else
       x, y = divisors.coerce(self)
-      return x.divmod(y)
+      x.divmod(y)
     end
   end
 
   def /(other) # other be PolynomialM
-    q, r = self.divmod(other); return q[0]
+    q, r = self.divmod(other)
+    q[0]
   end
 
   def %(other) # other be PolynomialM
-    q, r = self.divmod(other); return r
+    q, r = self.divmod(other)
+    r
   end
 
   def divmodZp(divisors, p) # return q[],r
@@ -474,8 +511,10 @@ class PolynomialM # Polynomial of Multi Variable
       #divisors.sort!{|f1,f2| f2.lt<=>f1.lt};
       ltD = [];  # leading terms of divisors
       q = [];  # quotients
-      divisors.each_with_index { |f, i| ltD[i] = f.lt; q[i] = PolynomialM.new }
-      r = PolynomialM.new; pw = PolynomialM.new
+      divisors.each_with_index { |f, i| ltD[i] = f.lt
+                                        q[i] = PolynomialM.new }
+      r = PolynomialM.new
+      pw = PolynomialM.new
       while !h.monomials.empty?
         ltH = h.lt
         i = 0
@@ -493,12 +532,15 @@ class PolynomialM # Polynomial of Multi Variable
             i = i + 1
           end
         end
-        if !h.monomials.empty?; r.monomials.push(ltH); h.monomials.shift; end
+        if !h.monomials.empty?
+          r.monomials.push(ltH)
+          h.monomials.shift
+ end
       end
       r = r.coeff_to_Zp(p)
-      return q, r
+      [q, r]
     else
-      return self.divmodZp([PolynomialM(divisors)])
+      self.divmodZp([PolynomialM(divisors)])
     end
   end
 
@@ -506,12 +548,15 @@ class PolynomialM # Polynomial of Multi Variable
     if divisors.kind_of?(Array) && divisors[0].kind_of?(PolynomialM)
       # Multiple division.
       # "divisors" and quotient "q" are Array of PolynomialM
-      h = self.clone; h.normalize!
+      h = self.clone
+      h.normalize!
       #divisors.sort!{|f1,f2| f2.lt<=>f1.lt};
       ltD = [];  # leading terms of divisors
       q = [];  # quotients
-      divisors.each_with_index { |f, i| ltD[i] = f.lt; q[i] = PolynomialM.new }
-      r = PolynomialM.new; pw = PolynomialM.new
+      divisors.each_with_index { |f, i| ltD[i] = f.lt
+                                        q[i] = PolynomialM.new }
+      r = PolynomialM.new
+      pw = PolynomialM.new
       while !h.monomials.empty?
         ltH = h.lt
         i = 0
@@ -528,13 +573,16 @@ class PolynomialM # Polynomial of Multi Variable
             i = i + 1
           end
         end
-        if !h.monomials.empty?; r.monomials.push(ltH); h.monomials.shift; end
+        if !h.monomials.empty?
+          r.monomials.push(ltH)
+          h.monomials.shift
+ end
       end
-      return q, r
+      [q, r]
     elsif divisors.kind_of?(Numeric)
-      return self.divmod_i([PolynomialM(divisors)])
+      self.divmod_i([PolynomialM(divisors)])
     else
-      return self.divmod_i([PolynomialM(divisors)])
+      self.divmod_i([PolynomialM(divisors)])
     end
   end
 
@@ -548,7 +596,7 @@ class PolynomialM # Polynomial of Multi Variable
       }
       f = f + fw
     }
-    return f
+    f
   end
 
   def derivative(vars) # vars is Array of var names
@@ -570,7 +618,7 @@ class PolynomialM # Polynomial of Multi Variable
       end
     end
     f.normalize!
-    return f
+    f
   end
 
   def integral(vars) # vars is Array of var names
@@ -585,7 +633,7 @@ class PolynomialM # Polynomial of Multi Variable
       end
     end
     f.normalize!
-    return f
+    f
   end
 
   def lcm_coeff_denom # lcm of of denominator of coefficients as Rarional
@@ -594,7 +642,7 @@ class PolynomialM # Polynomial of Multi Variable
       c = m.coeff
       if c.kind_of?(Rational); den.push(c.denominator.abs); end
     }
-    return Number.lcm(den)
+    Number.lcm(den)
   end
 
   def gcd_coeff_num # gcd of numerator of coefficients as Rational
@@ -603,7 +651,7 @@ class PolynomialM # Polynomial of Multi Variable
       c = m.coeff
       if c.kind_of?(Rational) || c.kind_of?(Integer); num.push(c.numerator.abs); end
     }
-    return Number.gcd(num)
+    Number.gcd(num)
   end
 
   def coeff_truncate # truncate each coefficient to Integer
@@ -612,7 +660,7 @@ class PolynomialM # Polynomial of Multi Variable
       f.monomials[i].coeff = f.monomials[i].coeff.to_i
     end
     f.normalize!
-    return f
+    f
   end
 
   def coeff_to_f # converts each element to Float
@@ -621,14 +669,14 @@ class PolynomialM # Polynomial of Multi Variable
       f.monomials[i].coeff = f.monomials[i].coeff.to_f
     end
     f.normalize!
-    return f
+    f
   end
 
   def coeff_to_Z # Rational係数多項式を定数倍して Z係数かつ係数のGCDを1にする.
     f = self * self.lcm_coeff_denom
     f = f / f.gcd_coeff_num
     f = f.coeff_truncate
-    return f
+    f
   end
 
   def coeff_to_Zp(p)
@@ -637,14 +685,14 @@ class PolynomialM # Polynomial of Multi Variable
       f.monomials[i].coeff = Number.modP(f.monomials[i].coeff, p)
     end
     f.normalize!
-    return f
+    f
   end
 
   def inspect
     if @monomials.blank?
-      return "PolynomialM()"
+      "PolynomialM()"
     else
-      return sprintf "PolynomialM([%s])", @monomials.join(",")
+      sprintf "PolynomialM([%s])", @monomials.join(",")
     end
   end
 

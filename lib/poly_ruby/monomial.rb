@@ -64,7 +64,7 @@
 
 def Monomial(c = 0, p = {}) # coefficient and power product
   p.each_key { |v| Monomial.append_var_name(v) }
-  return Monomial.new(c, p)
+  Monomial.new(c, p)
 end
 
 class Monomial
@@ -80,13 +80,14 @@ class Monomial
   attr_accessor :power
 
   def clone
-    m = Monomial.new(@coeff, @power.clone); return m
+    m = Monomial.new(@coeff, @power.clone)
+    m
   end
 
   def ==(other)
     case other
     when Monomial
-      return self.coeff == other.coeff && self.power == other.power
+      self.coeff == other.coeff && self.power == other.power
     else
       raise TypeError
     end
@@ -98,10 +99,34 @@ class Monomial
 
   def to_s(format = "text")
     case format
-    when "text"; timeC = ""; timeV = "*"; power1 = "^("; power2 = ")"; ms = ""; me = ""
-    when "tex"; timeC = ""; timeV = ""; power1 = "^{"; power2 = "}"; ms = ""; me = ""
-    when "texm"; timeC = ""; timeV = ""; power1 = "^{"; power2 = "}"; ms = "$"; me = "$"
-    when "prog"; timeC = "*"; timeV = "*"; power1 = "**("; power2 = ")"; ms = ""; me = ""
+    when "text"
+      timeC = ""
+      timeV = "*"
+      power1 = "^("
+      power2 = ")"
+      ms = ""
+      me = ""
+    when "tex"
+      timeC = ""
+      timeV = ""
+      power1 = "^{"
+      power2 = "}"
+      ms = ""
+      me = ""
+    when "texm"
+      timeC = ""
+      timeV = ""
+      power1 = "^{"
+      power2 = "}"
+      ms = "$"
+      me = "$"
+    when "prog"
+      timeC = "*"
+      timeV = "*"
+      power1 = "**("
+      power2 = ")"
+      ms = ""
+      me = ""
     end
     # timeC: 係数と変数間の記号
     # timeV: 変数間の分離記号
@@ -115,25 +140,30 @@ class Monomial
       sign = ""
     end
     if c.kind_of?(Rational) && (c.denominator != 1)
-      den = "/" + c.denominator.to_s; c = c.numerator
+      den = "/" + c.denominator.to_s
+      c = c.numerator
     else
       den = ""
     end
-    vs = ""; ts = ""
+    vs = ""
+    ts = ""
     VarOrder.each { |v|
       d = @power[v]
-      if d != 0; vs = vs + ts + v; ts = timeV
+      if d != 0
+        vs = vs + ts + v
+        ts = timeV
         if d > 1; vs = vs + power1 + d.to_s + power2; end       end
     }
     str = sign
     if (c != 1) || (vs == ""); str = str + c.to_s; end
     if (c != 1) && (vs != ""); str = str + timeC; end
     str = str + vs + den
-    return ms + str + me
+    ms + str + me
   end
 
   def power_product
-    m = Monomial.new(1, @power); return m
+    m = Monomial.new(1, @power)
+    m
   end
 
   def lcm(other) # lcm of power product
@@ -146,7 +176,7 @@ class Monomial
       d = [power[v], other.power[v]].max
       m.power[v] = d
     }
-    return m
+    m
   end
 
   def gcd(other) # gcd of power product
@@ -155,34 +185,35 @@ class Monomial
       d = [@power[v], other.power[v]].min
       m.power[v] = d
     }
-    return m
+    m
   end
 
   def -@
-    return Monomial.new(-@coeff, @power)
+    Monomial.new(-@coeff, @power)
   end
 
   def negate!
-    @coeff = -@coeff; return self
+    @coeff = -@coeff
+    self
   end
 
   # Assume that power is the same.
   def +(m)
     if m.kind_of?(Monomial) && (0 == (self <=> m))
-      return Monomial.new(@coeff + m.coeff, @power)
+      Monomial.new(@coeff + m.coeff, @power)
     elsif m.kind_of?(Monomial) || M.kind_of?(Numeric)
-      return PolynomialM(self) + PolynomialM(m)
+      PolynomialM(self) + PolynomialM(m)
     elsif m.kind_of?(PolynomialM)
-      return PolynomialM(self) + m
+      PolynomialM(self) + m
     else
       x, y = m.coerce(self)
-      return x + m
+      x + m
     end
   end
 
   # Assume that power is the same.
   def -(m)
-    return self + (-m)
+    self + (-m)
   end
 
   def **(n)
@@ -197,7 +228,7 @@ class Monomial
         p = p * p
         n >>= 1
       end
-      return s
+      s
     else
       raise TypeError
     end
@@ -208,12 +239,12 @@ class Monomial
       c = @coeff * m.coeff
       p = @power.clone
       m.power.each_pair { |v, d| p[v] = p[v] + d }
-      return Monomial.new(c, p)
+      Monomial.new(c, p)
     elsif m.kind_of?(Numeric)
-      return Monomial.new(@coeff * m, @power)
+      Monomial.new(@coeff * m, @power)
     else
       x, y = m.coerce(self)
-      return x * m
+      x * m
     end
   end
 
@@ -221,7 +252,7 @@ class Monomial
   def divisible?(divisor)
     if @coeff == 0; return false; end
     divisor.power.each_pair { |v, d| if @power[v] < d; return false; end }
-    return true
+    true
   end
 
   def /(m)
@@ -229,9 +260,9 @@ class Monomial
       q = Number.divII(@coeff, m.coeff)
       p = @power.clone
       m.power.each_pair { |v, d| p[v] = p[v] - d } # determine exponents
-      return Monomial.new(q, p)
+      Monomial.new(q, p)
     elsif m.kind_of?(Numeric)
-      return Monomial.new(Number.divII(@coeff, m), @power)
+      Monomial.new(Number.divII(@coeff, m), @power)
     else
       raise TypeError
     end
@@ -241,7 +272,7 @@ class Monomial
   def divisibleI?(divisor)
     if (0 <= @coeff) && (@coeff < divisor.coeff.abs); return false; end
     divisor.power.each_pair { |v, d| if @power[v] < d; return false; end }
-    return true
+    true
   end
 
   def divmod_i(m)
@@ -250,14 +281,14 @@ class Monomial
       r = @coeff - q * m.coeff # Note that r>=0
       p = @power.clone
       m.power.each_pair { |v, d| p[v] = p[v] - d } # determine exponents
-      return Monomial.new(q, p), Monomial.new(r, p)
+      [Monomial.new(q, p), Monomial.new(r, p)]
     elsif m.kind_of?(Numeric)
       q = Number.divFloor(@coeff, m)
       r = @coeff - q * m # Note that r>=0
-      return Monomial.new(q, @power), Monomial.new(r, @power)
+      [Monomial.new(q, @power), Monomial.new(r, @power)]
     else
       x, y = m.coerce(self)
-      return x * m
+      x * m
       #raise TypeError
     end
   end
@@ -267,10 +298,10 @@ class Monomial
       q = Number.modP(@coeff * Number.inv(m.coeff, prime), prime)
       p = @power.clone
       m.power.each_pair { |v, d| p[v] = p[v] - d } # determine exponents
-      return Monomial.new(q, p)
+      Monomial.new(q, p)
     elsif m.kind_of?(Integer)
       q = Number.modP(@coeff * Number.inv(m, prime), prime)
-      return Monomial.new(q, @power)
+      Monomial.new(q, @power)
     else
       raise TypeError
     end
@@ -278,10 +309,10 @@ class Monomial
 
   def coerce(x)
     case x
-    when Numeric; return PolynomialM(x), PolynmialM(self)
-    when Monomial; return PolynomialM(x), PolynmialM(self)
-    when Polynomial; return PolynomialM(x), PolynmialM(self)
-    when PolynomialM; return x, PolynmialM(self)
+    when Numeric; [PolynomialM(x), PolynmialM(self)]
+    when Monomial; [PolynomialM(x), PolynmialM(self)]
+    when Polynomial; [PolynomialM(x), PolynmialM(self)]
+    when PolynomialM; [x, PolynmialM(self)]
     else
       raise TypeError
     end
@@ -292,7 +323,7 @@ class Monomial
   def total_degree
     deg = 0
     @power.each_value { |d| deg = deg + d }
-    return deg
+    deg
   end
 
   #  lex(lexicographical),
@@ -308,7 +339,7 @@ class Monomial
   end
 
   def Monomial.get_term_order
-    return TermOrder[0]
+    TermOrder[0]
   end
 
   VarOrder0 = ["x", "y", "z", "u", "v", "w", "p", "q", "r", "s", "t"] +
@@ -320,7 +351,7 @@ class Monomial
   end
 
   def Monomial.get_var_order
-    return VarOrder.dup
+    VarOrder.dup
   end
 
   def Monomial.append_var_name(v) # Assume that v be String
@@ -368,9 +399,10 @@ class Monomial
   #  0: self=m
   # -1: m ≺ self
   def deglex(m)
-    t1 = self.total_degree; t2 = m.total_degree
+    t1 = self.total_degree
+    t2 = m.total_degree
     if t1 != t2; return t1 <=> t2; end
-    return self.lex(m)
+    self.lex(m)
   end
 
   # degree reverse lexicographic order(全次数逆辞書式順序)
@@ -378,9 +410,10 @@ class Monomial
   #  0: self=m
   # -1: m ≺ self
   def degrevlex(m)
-    t1 = self.total_degree; t2 = m.total_degree
+    t1 = self.total_degree
+    t2 = m.total_degree
     if t1 != t2; return t1 <=> t2; end
-    return self.revlex(m)
+    self.revlex(m)
   end
 
   #  1: self ≺ m; self > m
@@ -389,15 +422,15 @@ class Monomial
   def <=>(m, term_order=:lex)
     case term_order
     when :lex
-      return self.lex(m)
+      self.lex(m)
     when :deglex
-      return self.deglex(m)
+      self.deglex(m)
     when :degrevlex
-      return self.degrevlex(m)
+      self.degrevlex(m)
     end
   end
 
   def inspect
-    return "Monomial(@coeff=#{@coeff}, @power=#{@power})"
+    "Monomial(@coeff=#{@coeff}, @power=#{@power})"
   end
 end # Monomial

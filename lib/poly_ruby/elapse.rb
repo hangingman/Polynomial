@@ -9,19 +9,19 @@ class Elapse
   def mark(n = -1)
     if 0 > n then n = @markPt.size; end
     @markPt[n] = Float(Times.times[0])
-    return n
+    n
   end
 
   def to_f(startPt = -2, endPt = -1)
-    return @markPt[endPt] - @markPt[startPt]
+    @markPt[endPt] - @markPt[startPt]
   end
 
   def elapse(startPt = -2, endPt = -1)
-    return to_f(startPt, endPt)
+    to_f(startPt, endPt)
   end
 
   def to_s(startPt = -2, endPt = -1)
-    return to_f(startPt, endPt).to_s
+    to_f(startPt, endPt).to_s
   end
 
   def print(startPt = -2, endPt = -1)
@@ -29,10 +29,16 @@ class Elapse
   end
 
   def time # for block
-    mark; yield; mark
+    mark
+    yield
+    mark
   end
 
   def Elapse::time
-    t = new; t.mark; yield; t.mark; return t
+    t = new
+    t.mark
+    yield
+    t.mark
+    t
   end
 end

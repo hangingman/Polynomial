@@ -49,13 +49,13 @@
 
 def HyperReal(r)
   if r.kind_of?(HyperReal)
-    return r.clone
+    r.clone
   elsif r.kind_of?(RationalPoly)
-    return HyperReal.new(r)
+    HyperReal.new(r)
   elsif r.kind_of?(Integer)
-    return HyperReal.new(RationalPoly(r))
+    HyperReal.new(RationalPoly(r))
   elsif r.kind_of?(Rational)
-    return HyperReal.new(RationalPoly(r))
+    HyperReal.new(RationalPoly(r))
   elsif r.kind_of?(Float)
     if HyperReal::F_to_IR[0]
       ir = RationalPoly(r.to_ir)
@@ -63,9 +63,9 @@ def HyperReal(r)
       ir = HyperReal.Inf_to_HyperInf(r)
     end
     if ir.kind_of?(HyperReal)
-      return ir
+      ir
     else
-      return HyperReal.new(RationalPoly(ir))
+      HyperReal.new(RationalPoly(ir))
     end
   else
     raise TyoeError
@@ -84,7 +84,7 @@ class HyperReal < Numeric
   attr :val
 
   def clone
-    return HyperReal.new(@val.clone)
+    HyperReal.new(@val.clone)
   end
 
   r = RationalPoly("x", 1)
@@ -99,169 +99,191 @@ class HyperReal < Numeric
     # then return HyperReal::Infinity(-Infinity, Indefinite resp.)
     # else return f itself.
     if f.kind_of?(Float) && f.to_s == "Infinity"
-      return Infinity
+      Infinity
     elsif f.kind_of?(Float) && f.to_s == "-Infinity"
-      return -Infinity
+      -Infinity
     elsif f.kind_of?(Float) && f.to_s == "NaN"
-      return Indefinite
+      Indefinite
     else
-      return f
+      f
     end
   end
 
   def reduce
-    return HyperReal(self.val.reduce)
+    HyperReal(self.val.reduce)
   end
 
   def reduce!
-    return HyperReal(self.val.reduce!)
+    HyperReal(self.val.reduce!)
   end
 
   def finite?
-    v = @val.reduce; num = v.numeretor; den = v.denominator
-    return (den[0] != 0) || ((den != 0) && (num == 0))
+    v = @val.reduce
+    num = v.numeretor
+    den = v.denominator
+    (den[0] != 0) || ((den != 0) && (num == 0))
   end
 
   def indefinite?
-    return (v.denominator == 0)
+    (v.denominator == 0)
   end
 
   def infinite? # +-infinite number
-    v = @val.reduce; num = v.numeretor; den = v.denominator
-    return (den[0] == 0) && ((den != 0) && (num[0] != 0))
+    v = @val.reduce
+    num = v.numeretor
+    den = v.denominator
+    (den[0] == 0) && ((den != 0) && (num[0] != 0))
   end
 
   def positive_infinite?
-    v = @val.reduce; num = v.numeretor; den = v.denominator
-    return (den[0] == 0) && (0 < (num[0] * den[den.mindeg]))
+    v = @val.reduce
+    num = v.numeretor
+    den = v.denominator
+    (den[0] == 0) && (0 < (num[0] * den[den.mindeg]))
   end
 
   def negative_infinite?
-    v = @val.reduce; num = v.numeretor; den = v.denominator
-    return (den[0] == 0) && (0 > (num[0] * den[den.mindeg]))
+    v = @val.reduce
+    num = v.numeretor
+    den = v.denominator
+    (den[0] == 0) && (0 > (num[0] * den[den.mindeg]))
   end
 
   def to_std # return standard part
-    v = @val.reduce; num = v.numerator; den = v.denominator
-    if den[0] != 0; return Number.divII(num[0], den[0]) elsif den != 0
-      if num == 0; return 0 else
-        if 0 < (num[0] * den[den.mindeg]); return Number.Inf_IEEE754; else return -Number.Inf_IEEE754; end
-      end
+    v = @val.reduce
+    num = v.numerator
+    den = v.denominator
+    if den[0] != 0; Number.divII(num[0], den[0]) elsif den != 0
+                                                   if num == 0; 0 else
+                                                                    if 0 < (num[0] * den[den.mindeg])
+                                                                      Number.Inf_IEEE754
+ else -Number.Inf_IEEE754; end
+                                                   end
     else
-      return Number.NaN_IEEE754
+      Number.NaN_IEEE754
     end
   end
 
   def to_s(standard = true) # true: Rational, false: rational form of HyperReal
-    v = @val.reduce; num = v.numerator; den = v.denominator
+    v = @val.reduce
+    num = v.numerator
+    den = v.denominator
     if standard
-      if den[0] != 0; return Number.divII(num[0], den[0]).to_s elsif den != 0
-        if num == 0; return "0" else
-          if 0 < (num[0] * den[den.mindeg]); return "Infinity" else return "-Infinity"; end
-        end
+      if den[0] != 0; Number.divII(num[0], den[0]).to_s elsif den != 0
+                                                          if num == 0; "0" else
+                                                                             if 0 < (num[0] * den[den.mindeg])
+                                                                               "Infinity" else "-Infinity"
+ end
+                                                          end
       else
-        return "Indefinite"
+        "Indefinite"
       end
     else
-      return "(" + num.to_s("text", "e", false) + ")/(" + den.to_s("text", "e", false) + ")"
+      "(" + num.to_s("text", "e", false) + ")/(" + den.to_s("text", "e", false) + ")"
     end
   end
 
   def to_f
-    return self.to_std.to_f
+    self.to_std.to_f
   end
 
   def approx(deg = false)
     # Taylor approximation of degree "deg"
-    return HyperReal(@val.approx(deg))
+    HyperReal(@val.approx(deg))
   end
 
   def to_approx_poly(deg = false)
     # Polynmial of Taylor approximation of degree "deg"
-    return self.approx(deg).val.numerator
+    self.approx(deg).val.numerator
   end
 
   def to_RationalPoly
-    return @val
+    @val
   end
 
   def <=>(other) # compare as non-standard number
     r = (self - other).val.reduce
-    num = r.numerator; den = r.denominator
-    if den == 0; return 0.0 / 0.0 # return NaN
-      elsif num == 0; return 0 else
-      return (den[den.mindeg] * num[num.mindeg]) <=> 0
+    num = r.numerator
+    den = r.denominator
+    if den == 0; 0.0 / 0.0 # return NaN
+      elsif num == 0; 0 else
+                          (den[den.mindeg] * num[num.mindeg]) <=> 0
     end
   end
 
   def ==(other) # Same as non-standard number?
-    return 0 == (self <=> other)
+    0 == (self <=> other)
     # r=(self<=>other); return (r.kind_of?(Integer)&&(0==r))
   end
 
   def sim_eql?(other) # Have same standard part?
-    s = self - other; return s.finite? && (s.to_std == 0)
+    s = self - other
+    s.finite? && (s.to_std == 0)
   end
 
   def -@
-    return HyperReal.new(-@val)
+    HyperReal.new(-@val)
   end
 
   def abs
-    if self < 0; return -self; else return self; end
+    if self < 0; -self; else self; end
   end
 
   def +(x)
     if x.kind_of?(HyperReal)
-      return HyperReal.new(@val + x.val)
+      HyperReal.new(@val + x.val)
     elsif x.kind_of?(Integer) || (defined?(Rational) && x.kind_of?(Rational))
-      return HyperReal.new(@val + x)
+      HyperReal.new(@val + x)
     elsif x.kind_of?(Float)
-      return self + HyperReal(x)
-    else a, b = x.coerce(self); return a + b     end
+      self + HyperReal(x)
+    else a, b = x.coerce(self)
+         a + b     end
   end
 
   def -(x)
     if x.kind_of?(HyperReal)
-      return HyperReal.new(@val - x.val)
+      HyperReal.new(@val - x.val)
     elsif x.kind_of?(Integer) || (defined?(Rational) && x.kind_of?(Rational))
-      return HyperReal.new(@val - x)
+      HyperReal.new(@val - x)
     elsif x.kind_of?(Float)
-      return self - HyperReal(x)
-    else a, b = x.coerce(self); return a - b     end
+      self - HyperReal(x)
+    else a, b = x.coerce(self)
+         a - b     end
   end
 
   def *(x)
     if x.kind_of?(HyperReal)
-      return HyperReal.new(@val * x.val)
+      HyperReal.new(@val * x.val)
     elsif x.kind_of?(Integer) || (defined?(Rational) && x.kind_of?(Rational))
-      return HyperReal.new(@val * x)
+      HyperReal.new(@val * x)
     elsif x.kind_of?(Float)
-      return self * HyperReal(x)
-    else a, b = x.coerce(self); return a * b     end
+      self * HyperReal(x)
+    else a, b = x.coerce(self)
+         a * b     end
   end
 
   def /(x)
     if x.kind_of?(HyperReal)
       num = @val.numerator * x.val.denominator
       den = @val.denominator * x.val.numerator
-      return HyperReal.new(RationalPoly.new(num, den))
+      HyperReal.new(RationalPoly.new(num, den))
     elsif x.kind_of?(Integer) || (defined?(Rational) && x.kind_of?(Rational))
-      return self / HyperReal.new(RationalPoly(x))
+      self / HyperReal.new(RationalPoly(x))
     elsif x.kind_of?(Float)
-      return self / HyperReal(x)
-    else a, b = x.coerce(self); return a / b     end
+      self / HyperReal(x)
+    else a, b = x.coerce(self)
+         a / b     end
   end
 
   def **(n) # Restriction: n be Integer.
-    if n.kind_of?(Integer); return HyperReal.new(@val ** n) else raise TypeError end
+    if n.kind_of?(Integer); HyperReal.new(@val ** n) else raise TypeError end
   end
 
   def coerce(other)
     case other
-    when Integer; return HyperReal(other), self
-    when Rational; return HyperReal(other), self
-    when Float; return HyperReal(other), self
+    when Integer; [HyperReal(other), self]
+    when Rational; [HyperReal(other), self]
+    when Float; [HyperReal(other), self]
     else raise TypeError
     end
   end

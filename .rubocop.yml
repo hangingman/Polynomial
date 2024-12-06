@@ -1,7 +1,12 @@
+require:
+  - rubocop-rake
+  - rubocop-rspec
+
 AllCops:
+  TargetRubyVersion: 3.1
   DisabledByDefault: true
   Exclude:
-    - 'gems/**/*'
+    - "gems/**/*"
   NewCops: enable
 
 Style/StringLiterals:
@@ -14,3 +19,15 @@ Style/StringLiteralsInInterpolation:
 
 Layout/LineLength:
   Max: 120
+
+# セミコロンを使わない
+Semicolon:
+  AllowAsExpressionSeparator: false
+# インデントに関する指摘を有効にする
+Layout/IndentationWidth:
+  Enabled: true
+Layout/IndentationConsistency:
+  Enabled: true
+# 不要なreturn句を使わない
+Style/RedundantReturn:
+  Enabled: true

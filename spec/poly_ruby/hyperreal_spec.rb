@@ -4,12 +4,12 @@ require "poly_ruby/hyperreal" # Non-standard real class
 require "poly_ruby/mathext" # extension for math.
 
 def f1(x)
-  return (3 * x ** 2 - x - 2) / (2 * x ** 2 - x - 1)
+  (3 * x ** 2 - x - 2) / (2 * x ** 2 - x - 1)
   #  (x-1)(3x+2)/(x-1)(2x+1)
 end
 
 def f2(x)
-  return (2 * x + 3) / (4 * x + 5)
+  (2 * x + 3) / (4 * x + 5)
 end
 
 RSpec.describe HyperReal do
@@ -33,7 +33,8 @@ RSpec.describe HyperReal do
     printf "f1(%s)=%s\n", x, f1(x)
 
     print "-- derivative in the sense of Leibniz \n"
-    x = Rational(2); dx = HyperReal::Epsilon
+    x = Rational(2)
+    dx = HyperReal::Epsilon
     f = Poly("5x^3+6x^2+7x+8")
     df = (f.substitute(dx + x) - f.substitute(x))
     printf "f'(%s)=%s\n", x, df / dx
@@ -64,7 +65,8 @@ RSpec.describe HyperReal do
     printf "sin(%s)=%s\n", x.to_s(false), v.to_approx_poly.to_s("text", "x", false)
 
     print "-- substitute a polynomial (and get a polynomial approximate)\n"
-    x = Poly("1+x"); v = MathExt.sin(x)
+    x = Poly("1+x")
+    v = MathExt.sin(x)
     printf "sin(%s)=%s\n", x, v
 
     print "-- substitute a polynomial (and get a polynomial approximate)\n"

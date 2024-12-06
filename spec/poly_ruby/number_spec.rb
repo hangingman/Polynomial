@@ -6,30 +6,31 @@ RSpec.describe Number do
 
   describe "#inv" do
     it "can return inverse" do
-      p=7;n=5;
+      p=7
+      n=5
       expect(Number.inv(n,p)).to eq 3
     end
   end
   describe "#factorial" do
     it "can return factorial" do
-      n=5;
+      n=5
       expect(Number.factorial(n)).to eq 120
     end
   end
   context "Given some numbers" do
-      n=[24,81,56];
-      describe "#gcd2" do
-        it "can return GCD" do
-          gcd,*aj=Number.gcd2(n)
-          expect(gcd).to eq 1
-          expect(aj).to match_array [-190,57,-1]
-        end
+    n=[24,81,56]
+    describe "#gcd2" do
+      it "can return GCD" do
+        gcd,*aj=Number.gcd2(n)
+        expect(gcd).to eq 1
+        expect(aj).to match_array [-190,57,-1]
       end
-      describe "#lcm" do
-        it "can return LCM" do
-          expect(Number.lcm(n)).to eq 4536
-        end
+    end
+    describe "#lcm" do
+      it "can return LCM" do
+        expect(Number.lcm(n)).to eq 4536
       end
+    end
   end
   describe "#prime?" do
     it "can detect prime number" do

@@ -35,19 +35,23 @@ module GBase
   end
 
   def getSPoly(f, g)
-    lpF = f.lp; ltF = f.lt
-    lpG = g.lp; ltG = g.lt
+    lpF = f.lp
+    ltF = f.lt
+    lpG = g.lp
+    ltG = g.lt
     lcm = lpF.lcm(lpG)
     s = PolynomialM.new([lcm / ltF]) * f - PolynomialM.new([lcm / ltG]) * g
-    return s
+    s
   end
 
   def getSPolyZp(f, g, prime)
-    lpF = f.lp; lcFinv = Number.inv(f.lc, prime)
-    lpG = g.lp; lcGinv = Number.inv(g.lc, prime)
+    lpF = f.lp
+    lcFinv = Number.inv(f.lc, prime)
+    lpG = g.lp
+    lcGinv = Number.inv(g.lc, prime)
     lcm = lpF.lcm(lpG)
     s = PolynomialM.new([lcm / lpF]) * f * lcFinv - PolynomialM.new([lcm / lpG]) * g * lcGinv
-    return s
+    s
   end
 
   def makeGBase
@@ -83,9 +87,13 @@ module GBase
     GBase.sort! { |f1, f2| f2 <=> f1 }
     i = 0
     while i < GBase.size
-      j = i + 1; change = false
+      j = i + 1
+      change = false
       while j < GBase.size
-        if GBase[i].lt.divisible?(GBase[j].lt); change = true; break; end
+        if GBase[i].lt.divisible?(GBase[j].lt)
+          change = true
+          break
+ end
         j = j + 1
       end
       if change; GBase[i] = nil; end
@@ -112,7 +120,9 @@ module GBase
     if GBase.size > 1
       GBase.sort! { |f1, f2| f2 <=> f1 }
       for i in 0..GBase.size - 1
-        p = GBase[i]; g = GBase.dup; g.delete_at(i)
+        p = GBase[i]
+        g = GBase.dup
+        g.delete_at(i)
         q, r = p.divmod(g)
         GBase[i] = r
       end
@@ -123,7 +133,9 @@ module GBase
     GBase.sort! { |f1, f2| f2 <=> f1 }
     if GBase.size > 1
       for i in 0..GBase.size - 1
-        p = GBase[i]; g = GBase.dup; g.delete_at(i)
+        p = GBase[i]
+        g = GBase.dup
+        g.delete_at(i)
         q, r = p.divmodZp(g, prime)
         GBase[i] = r
       end
@@ -144,15 +156,19 @@ module GBase
         SQueue.push(getSPoly(GBase[i], GBase[j]))
       end
     end
-    makeGBase; makeMinimalGBase; makeMinimalLcGBase; makeReducedGBase
+    makeGBase
+    makeMinimalGBase
+    makeMinimalLcGBase
+    makeReducedGBase
     # printGb
     GBase.sort! { |f1, f2| f2 <=> f1 }
-    return GBase
+    GBase
   end
 
   def getGBaseZp(fList, prime)
     # INITIALIZATION:
-    GBase.clear; SQueue.clear
+    GBase.clear
+    SQueue.clear
     fList.each { |f|
       x = f.coeff_to_Zp(prime)
       if not x.zero? then GBase.push(x); end
@@ -164,11 +180,13 @@ module GBase
         SQueue.push(getSPolyZp(GBase[i], GBase[j], prime))
       end
     end
-    makeGBaseZp(prime); makeMinimalGBase
-    makeMinimalLcGBaseZp(prime); makeReducedGBaseZp(prime)
+    makeGBaseZp(prime)
+    makeMinimalGBase
+    makeMinimalLcGBaseZp(prime)
+    makeReducedGBaseZp(prime)
     #printGb
     GBase.sort! { |f1, f2| f2 <=> f1 }
-    return GBase
+    GBase
   end
 
   module_function :printGb, :getSPoly, :getSPolyZp

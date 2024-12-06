@@ -19,7 +19,7 @@ class ShutingYard
     when '='
       return 1
     end
-    return 0
+    0
   end
 
   def op_left_assoc(c)
@@ -29,7 +29,7 @@ class ShutingYard
     when '=', '^', '**'
       return false
     end
-    return false
+    false
   end
 
   def op_arg_count(c)
@@ -39,7 +39,7 @@ class ShutingYard
     when '^', '**'
       return 1
     end
-    return 0
+    0
   end
 
   def tokenize(str)
@@ -63,7 +63,7 @@ class ShutingYard
         raise "scanner error"
       end
     end
-    return @tokens
+    @tokens
   end
 
   def parse(tokens)
@@ -116,6 +116,6 @@ class ShutingYard
       @out_queue.enqueue(@op_stack.pop)
     end
 
-    return @out_queue
+    @out_queue
   end
 end

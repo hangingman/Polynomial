@@ -32,26 +32,33 @@ module GBaseI1L
   end
 
   def shift0(f)
-    h = f.clone; while h[0] == 0; h.array.shift; end
-    return h.normalize!
+    h = f.clone
+    while h[0] == 0
+      h.array.shift
+    end
+    h.normalize!
   end
 
   def sortFuncGb(f, g)
-    cF = f.lc.abs; cG = g.lc.abs
-    if (cF != cG); return cF <=> cG else return f.degree <=> g.degree end
+    cF = f.lc.abs
+    cG = g.lc.abs
+    if (cF != cG); cF <=> cG else f.degree <=> g.degree end
   end
 
   def getSPolyZ2(f, g) # S in Z<x>
-    fc = f[0]; gc = g[0]; gcd = Number.gcd(fc.abs, gc.abs);  # lcm=fc*gc/gcd
+    fc = f[0]
+    gc = g[0]
+    gcd = Number.gcd(fc.abs, gc.abs)
     h = f * (gc.div(gcd)) - g * (fc.div(gcd))
-    return h / Poly("x")
+    h / Poly("x")
   end
 
   def getSPolyZ3(f, g) # S in Z<x>
-    fc = f.lc; gc = g[0]
+    fc = f.lc
+    gc = g[0]
     gcd = Number.gcd(fc.abs, gc.abs);  # lcm=fc*gc/gcd
 
-    return getSPolyZ2(f * (gc.div(gcd)), g)
+    getSPolyZ2(f * (gc.div(gcd)), g)
   end
 
   def makeGBaseI1L # make Grobner basis
@@ -83,20 +90,25 @@ module GBaseI1L
   end
 
   def makeStrongGB # make strong Grobner basis
-    absGB; strongGb = []; i = 0
+    absGB
+    strongGb = []
+    i = 0
     sat = []  #saturated subset
     GBase.sort! { |f1, f2| f1 <=> f2 }
     while i < GBase.size
       deglcm = GBase[i].degree
       while (i + 1 <= GBase.size - 1) && (deglcm == GBase[i + 1].degree); i = i + 1; end
       sat = GBase[0..i] # set saturated subset
-      cj = []; sat.each_index { |k| cj.push(sat[k].lc) }
-      cJ, *aj = Number.gcd2(cj); fJ = Polynomial(0)
+      cj = []
+      sat.each_index { |k| cj.push(sat[k].lc) }
+      cJ, *aj = Number.gcd2(cj)
+      fJ = Polynomial(0)
       sat.each_with_index { |f, k| fJ = fJ + Polynomial.term(aj[k], deglcm - f.degree) * f }
       strongGb.push(fJ)
       i = i + 1
     end
-    GBase.replace(strongGb); GBase.sort! { |f1, f2| f2 <=> f1 }
+    GBase.replace(strongGb)
+    GBase.sort! { |f1, f2| f2 <=> f1 }
   end
 
   def makeMinimalStrongGB # reduced minimal strong GB
@@ -107,7 +119,10 @@ module GBaseI1L
       for i in 0..GBase.size - 2
         for j in i + 1..GBase.size - 1
           q, r = GBase[i].divmod_i(GBase[j])
-          if !q.zero?; new = true; GBase[i] = r.clone; end
+          if !q.zero?
+            new = true
+            GBase[i] = r.clone
+          end
         end
       end
       g1 = []
@@ -117,7 +132,9 @@ module GBaseI1L
   end
 
   def reverseDeg(f)
-    h = f.clone.normalize!; h.array.reverse!; return h.normalize!
+    h = f.clone.normalize!
+    h.array.reverse!
+    h.normalize!
   end
 
   def shift0GBase
@@ -126,7 +143,7 @@ module GBaseI1L
       sFlg = sFlg || (GBase[i][0] == 0)
       GBase[i] = shift0(GBase[i])
     end
-    return sFlg
+    sFlg
   end
 
   def getGBaseI1L(fList)
@@ -145,7 +162,8 @@ module GBaseI1L
       end
     }
     if gf.lc.abs != 1
-      listr = GBaseI1.getGBaseI1(listr); gf = listr[0].clone
+      listr = GBaseI1.getGBaseI1(listr)
+      gf = listr[0].clone
     end
     if gf.lc < 0; gf = -gf; end
     GPoly.array.replace(reverseDeg(gf).array)
@@ -158,7 +176,7 @@ module GBaseI1L
     makeStrongGB
     makeMinimalStrongGB
     GBase.sort! { |f1, f2| f2 <=> f1 }
-    return GBase
+    GBase
   end
 
   module_function :printGb, :absGB
